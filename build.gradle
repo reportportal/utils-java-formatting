@@ -15,10 +15,10 @@
  */
 apply plugin: 'java-library'
 
-apply from: "${project.scripts_url}/${project.scripts_branch}/build-quality.gradle"
+//apply from: "${project.scripts_url}/${project.scripts_branch}/build-quality.gradle"
 apply from: "${project.scripts_url}/${project.scripts_branch}/release-commons.gradle"
 apply from: "${project.scripts_url}/${project.scripts_branch}/signing.gradle"
-// apply from: "${project.scripts_url}/${project.scripts_branch}/jacoco.gradle"
+//apply from: "${project.scripts_url}/${project.scripts_branch}/jacoco.gradle"
 
 project.ext.limits = [
         'instruction': 60,
@@ -43,6 +43,7 @@ dependencies {
     api 'com.epam.reportportal:commons-model:5.0.0'
 
     implementation 'org.jsoup:jsoup:1.14.3'
+    implementation 'org.apache.httpcomponents:httpcore:4.4.15'
 
     testImplementation('com.github.reportportal:agent-java-test-utils:236a68c')
     testImplementation("org.junit.platform:junit-platform-runner:${junit5_runner_version}") {
@@ -70,4 +71,4 @@ release {
     }
 }
 
-// build.dependsOn jacocoTestReport
+//build.dependsOn jacocoTestReport
