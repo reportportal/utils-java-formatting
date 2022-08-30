@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+
+## [5.0.1]
 ### Added
 - Add `application/x-www-form-urlencoded` body type handling, by @HardNorth
 
