@@ -16,6 +16,7 @@
 
 package com.epam.reportportal.formatting.http;
 
+import com.epam.reportportal.formatting.http.entities.BodyType;
 import com.epam.reportportal.formatting.http.prettiers.HtmlPrettier;
 import com.epam.reportportal.formatting.http.prettiers.JsonPrettier;
 import com.epam.reportportal.formatting.http.prettiers.XmlPrettier;
@@ -23,6 +24,8 @@ import org.apache.http.entity.ContentType;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Constants {
 	public static final String REMOVED_TAG = "&lt;removed&gt;";
@@ -48,6 +51,12 @@ public class Constants {
 	)));
 
 	public static final Set<String> FORM_TYPES = Collections.singleton(ContentType.APPLICATION_FORM_URLENCODED.getMimeType());
+
+	public static final Map<String, BodyType> BODY_TYPE_MAP = Stream.of(
+			TEXT_TYPES.stream().collect(Collectors.toMap(k -> k, v -> BodyType.TEXT)),
+			FORM_TYPES.stream().collect(Collectors.toMap(k -> k, v -> BodyType.FORM)),
+			MULTIPART_TYPES.stream().collect(Collectors.toMap(k -> k, v -> BodyType.MULTIPART))
+	).flatMap(m -> m.entrySet().stream()).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
 	public static final Map<String, Function<String, String>> DEFAULT_PRETTIERS = Collections.unmodifiableMap(new HashMap<String, Function<String, String>>() {{
 		put(ContentType.APPLICATION_XML.getMimeType(), XmlPrettier.INSTANCE);

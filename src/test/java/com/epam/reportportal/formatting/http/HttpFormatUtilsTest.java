@@ -16,6 +16,7 @@
 
 package com.epam.reportportal.formatting.http;
 
+import com.epam.reportportal.formatting.http.entities.BodyType;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -31,7 +32,8 @@ public class HttpFormatUtilsTest {
 				new Object[] { "text/html; charset=utf-16", "text/html" },
 				new Object[] { "application/json", "application/json" },
 				new Object[] { null, "application/octet-stream" },
-				new Object[] { "application/x-www-form-urlencoded; charset=ISO-8859-1", "application/x-www-form-urlencoded" }
+				new Object[] { "application/x-www-form-urlencoded; charset=ISO-8859-1",
+						"application/x-www-form-urlencoded" }
 		);
 	}
 
@@ -57,5 +59,24 @@ public class HttpFormatUtilsTest {
 	@MethodSource("joinParts")
 	public void testJoinParts(String[] parts, String result) {
 		assertThat(HttpFormatUtils.joinParts(DELIMITER, parts), equalTo(result));
+	}
+
+	public static Iterable<Object[]> bodyTypes() {
+		return Arrays.asList(
+				new Object[] { "text/html; charset=utf-16", BodyType.TEXT },
+				new Object[] { "application/json", BodyType.TEXT },
+				new Object[] { null, BodyType.NONE },
+				new Object[] { "application/x-www-form-urlencoded; charset=ISO-8859-1", BodyType.FORM },
+				new Object[] { "image/jpeg", BodyType.BINARY },
+				new Object[] { "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW",
+						BodyType.MULTIPART },
+				new Object[] { "", BodyType.NONE }
+		);
+	}
+
+	@ParameterizedTest
+	@MethodSource("bodyTypes")
+	public void testGetBodyType(String contentType, BodyType expected) {
+		assertThat(HttpFormatUtils.getBodyType(contentType), equalTo(expected));
 	}
 }

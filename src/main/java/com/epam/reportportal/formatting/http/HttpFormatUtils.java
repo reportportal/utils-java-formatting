@@ -19,6 +19,7 @@ package com.epam.reportportal.formatting.http;
 import com.epam.reportportal.formatting.http.converters.DefaultCookieConverter;
 import com.epam.reportportal.formatting.http.converters.DefaultFormParamConverter;
 import com.epam.reportportal.formatting.http.converters.DefaultHttpHeaderConverter;
+import com.epam.reportportal.formatting.http.entities.BodyType;
 import com.epam.reportportal.formatting.http.entities.Cookie;
 import com.epam.reportportal.formatting.http.entities.Header;
 import com.epam.reportportal.formatting.http.entities.Param;
@@ -176,5 +177,17 @@ public class HttpFormatUtils {
 				.stream()
 				.map(e -> new Param(e.getKey(), e.getValue()))
 				.collect(Collectors.toList())).orElse(Collections.emptyList());
+	}
+
+	public static BodyType getBodyType(@Nullable String contentType, @Nullable Map<String, BodyType> typeMap) {
+		if (contentType == null || contentType.isEmpty()) {
+			return BodyType.NONE;
+		}
+		String mimeType = ContentType.parse(contentType).getMimeType();
+		return ofNullable(typeMap).map(m -> m.getOrDefault(mimeType, BodyType.BINARY)).orElse(BodyType.BINARY);
+	}
+
+	public static BodyType getBodyType(@Nullable String contentType) {
+		return getBodyType(contentType, BODY_TYPE_MAP);
 	}
 }
