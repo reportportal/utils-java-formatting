@@ -1,14 +1,16 @@
 # Changelog
 
 ## [Unreleased]
+### Added
+- `HttpRequestFormatter.Builder.bodyParams(List<Param>)` method, by @HardNorth
 
 ## [5.0.2]
 ### Added
-- Add `HttpFormatUtils.getBodyType` method, by @HardNorth
+- `HttpFormatUtils.getBodyType` method, by @HardNorth
 
 ## [5.0.1]
 ### Added
-- Add `application/x-www-form-urlencoded` body type handling, by @HardNorth
+- `application/x-www-form-urlencoded` body type handling, by @HardNorth
 
 ## [5.0.0]
 ### Added

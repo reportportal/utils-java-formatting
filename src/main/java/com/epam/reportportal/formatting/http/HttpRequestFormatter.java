@@ -257,6 +257,13 @@ public class HttpRequestFormatter {
 			return this;
 		}
 
+		public Builder bodyParams(List<Param> formParameters) {
+			type = BodyType.FORM;
+			this.mimeType = ContentType.APPLICATION_FORM_URLENCODED.getMimeType();
+			body = formParameters;
+			return this;
+		}
+
 		public Builder bodyParams(Map<String, String> formParameters) {
 			type = BodyType.FORM;
 			this.mimeType = ContentType.APPLICATION_FORM_URLENCODED.getMimeType();
