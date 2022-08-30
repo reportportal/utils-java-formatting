@@ -179,6 +179,7 @@ public class HttpFormatUtils {
 				.collect(Collectors.toList())).orElse(Collections.emptyList());
 	}
 
+	@Nonnull
 	public static BodyType getBodyType(@Nullable String contentType, @Nullable Map<String, BodyType> typeMap) {
 		if (contentType == null || contentType.isEmpty()) {
 			return BodyType.NONE;
@@ -187,6 +188,7 @@ public class HttpFormatUtils {
 		return ofNullable(typeMap).map(m -> m.getOrDefault(mimeType, BodyType.BINARY)).orElse(BodyType.BINARY);
 	}
 
+	@Nonnull
 	public static BodyType getBodyType(@Nullable String contentType) {
 		return getBodyType(contentType, BODY_TYPE_MAP);
 	}
