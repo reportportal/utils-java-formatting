@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+### Added
+- Add `HttpFormatUtils.getBodyType` method, by @HardNorth
 
 ## [5.0.1]
 ### Added
