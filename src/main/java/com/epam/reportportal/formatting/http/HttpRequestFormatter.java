@@ -17,11 +17,14 @@
 package com.epam.reportportal.formatting.http;
 
 import com.epam.reportportal.formatting.http.converters.DefaultCookieConverter;
+import com.epam.reportportal.formatting.http.converters.DefaultFormParamConverter;
 import com.epam.reportportal.formatting.http.converters.DefaultHttpHeaderConverter;
 import com.epam.reportportal.formatting.http.converters.DefaultUriConverter;
 import com.epam.reportportal.formatting.http.entities.BodyType;
 import com.epam.reportportal.formatting.http.entities.Cookie;
 import com.epam.reportportal.formatting.http.entities.Header;
+import com.epam.reportportal.formatting.http.entities.Param;
+import org.apache.http.entity.ContentType;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -39,6 +42,7 @@ public class HttpRequestFormatter {
 	private Function<String, String> uriConverter;
 	private Function<Header, String> headerConverter;
 	private Function<Cookie, String> cookieConverter;
+	private Function<Param, String> paramConverter;
 	private Map<String, Function<String, String>> prettiers;
 
 	private List<Header> headers;
@@ -76,6 +80,9 @@ public class HttpRequestFormatter {
 
 	@Nonnull
 	public String formatAsText() {
+		if (BodyType.FORM == type) {
+			return HttpFormatUtils.formatText(formatHead(), getFormBody(), BODY_FORM_TAG, paramConverter);
+		}
 		return HttpFormatUtils.formatText(formatHead(), getTextBody(), BODY_TAG, prettiers, mimeType);
 	}
 
@@ -89,6 +96,10 @@ public class HttpRequestFormatter {
 
 	public void setCookieConverter(@Nonnull Function<Cookie, String> cookieConverter) {
 		this.cookieConverter = cookieConverter;
+	}
+
+	public void setParamConverter(Function<Param, String> paramConverter) {
+		this.paramConverter = paramConverter;
 	}
 
 	public void setHeaders(@Nonnull List<Header> requestHeaders) {
@@ -130,6 +141,15 @@ public class HttpRequestFormatter {
 
 	}
 
+	@SuppressWarnings("unchecked")
+	public List<Param> getFormBody() {
+		if (BodyType.FORM == type) {
+			return (List<Param>) body;
+		}
+		throw new ClassCastException("Cannot return form body for body type: " + type.name());
+
+	}
+
 	public byte[] getBinaryBody() {
 		if (BodyType.BINARY == type) {
 			return (byte[]) body;
@@ -159,6 +179,7 @@ public class HttpRequestFormatter {
 		private Function<String, String> uriConverter;
 		private Function<Header, String> headerConverter;
 		private Function<Cookie, String> cookieConverter;
+		private Function<Param, String> paramConverter;
 
 		private BodyType type;
 		private String mimeType;
@@ -184,6 +205,11 @@ public class HttpRequestFormatter {
 
 		public Builder cookieConverter(Function<Cookie, String> cookieConverter) {
 			this.cookieConverter = cookieConverter;
+			return this;
+		}
+
+		public Builder paramConverter(Function<Param, String> paramConverter) {
+			this.paramConverter = paramConverter;
 			return this;
 		}
 
@@ -231,6 +257,20 @@ public class HttpRequestFormatter {
 			return this;
 		}
 
+		public Builder bodyParams(Map<String, String> formParameters) {
+			type = BodyType.FORM;
+			this.mimeType = ContentType.APPLICATION_FORM_URLENCODED.getMimeType();
+			body = HttpFormatUtils.toForm(formParameters);
+			return this;
+		}
+
+		public Builder bodyParams(String formParameters) {
+			type = BodyType.FORM;
+			this.mimeType = ContentType.APPLICATION_FORM_URLENCODED.getMimeType();
+			body = HttpFormatUtils.toForm(formParameters);
+			return this;
+		}
+
 		@SuppressWarnings("unchecked")
 		public Builder addBodyPart(HttpPartFormatter part) {
 			if (body != null && type == BodyType.MULTIPART) {
@@ -252,6 +292,7 @@ public class HttpRequestFormatter {
 			result.setUriConverter(ofNullable(uriConverter).orElse(DefaultUriConverter.INSTANCE));
 			result.setHeaderConverter(ofNullable(headerConverter).orElse(DefaultHttpHeaderConverter.INSTANCE));
 			result.setCookieConverter(ofNullable(cookieConverter).orElse(DefaultCookieConverter.INSTANCE));
+			result.setParamConverter(ofNullable(paramConverter).orElse(DefaultFormParamConverter.INSTANCE));
 			result.setPrettiers(ofNullable(prettiers).orElse(Constants.DEFAULT_PRETTIERS));
 			result.setHeaders(headers);
 			result.setCookies(cookies);

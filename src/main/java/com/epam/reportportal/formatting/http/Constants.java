@@ -31,8 +31,10 @@ public class Constants {
 	public static final String REQUEST_TAG = "**>>> REQUEST**";
 	public static final String RESPONSE_TAG = "**<<< RESPONSE**";
 	public static final String BODY_TAG = "**Body**";
+	public static final String BODY_FORM_TAG = "**Body form**";
 	public static final String COOKIES_TAG = "**Cookies**";
 	public static final String BODY_PART_TAG = "**Body part**";
+	public static final String BODY_HIGHLIGHT = "```";
 
 	public static final Set<String> MULTIPART_TYPES = Collections.singleton(ContentType.MULTIPART_FORM_DATA.getMimeType());
 
@@ -44,6 +46,8 @@ public class Constants {
 			ContentType.APPLICATION_XML.getMimeType(),
 			ContentType.DEFAULT_TEXT.getMimeType()
 	)));
+
+	public static final Set<String> FORM_TYPES = Collections.singleton(ContentType.APPLICATION_FORM_URLENCODED.getMimeType());
 
 	public static final Map<String, Function<String, String>> DEFAULT_PRETTIERS = Collections.unmodifiableMap(new HashMap<String, Function<String, String>>() {{
 		put(ContentType.APPLICATION_XML.getMimeType(), XmlPrettier.INSTANCE);

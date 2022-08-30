@@ -17,13 +17,18 @@
 package com.epam.reportportal.formatting.http;
 
 import com.epam.reportportal.formatting.http.converters.DefaultCookieConverter;
+import com.epam.reportportal.formatting.http.converters.DefaultFormParamConverter;
 import com.epam.reportportal.formatting.http.converters.DefaultHttpHeaderConverter;
 import com.epam.reportportal.formatting.http.entities.Cookie;
 import com.epam.reportportal.formatting.http.entities.Header;
+import com.epam.reportportal.formatting.http.entities.Param;
 import org.apache.http.entity.ContentType;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -33,8 +38,6 @@ import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
 
 public class HttpFormatUtils {
-
-	private static final String BODY_HIGHLIGHT = "```";
 
 	private HttpFormatUtils() {
 		throw new IllegalStateException("Static only class");
@@ -56,31 +59,50 @@ public class HttpFormatUtils {
 	}
 
 	@Nonnull
-	public static String formatHeaders(@Nullable List<Header> headers,
-			@Nullable Function<Header, String> headerConverter) {
-		if (headers == null || headers.isEmpty()) {
+	public static <T> String format(@Nullable List<T> entities, @Nonnull Function<T, String> converter,
+			@Nullable String tag) {
+		String prefix = tag == null ? "" : tag + LINE_DELIMITER;
+		if (entities == null || entities.isEmpty()) {
 			return "";
 		}
-		Function<Header, String> converter =
-				headerConverter == null ? DefaultHttpHeaderConverter.INSTANCE : headerConverter;
-		return of(headers.stream()
+		return of(entities.stream()
 				.map(converter)
-				.filter(h -> h != null && !h.isEmpty())
-				.collect(Collectors.joining(LINE_DELIMITER, HEADERS_TAG + LINE_DELIMITER, ""))).orElse("");
+				.filter(e -> e != null && !e.isEmpty())
+				.collect(Collectors.joining(LINE_DELIMITER, prefix, ""))).orElse("");
+	}
+
+	@Nonnull
+	public static String formatHeaders(@Nullable List<Header> headers,
+			@Nullable Function<Header, String> headerConverter) {
+		return format(headers,
+				headerConverter == null ? DefaultHttpHeaderConverter.INSTANCE : headerConverter,
+				HEADERS_TAG
+		);
 	}
 
 	@Nonnull
 	public static String formatCookies(@Nullable List<Cookie> cookies,
 			@Nullable Function<Cookie, String> cookieConverter) {
-		if (cookies == null || cookies.isEmpty()) {
-			return "";
+		return format(cookies,
+				cookieConverter == null ? DefaultCookieConverter.INSTANCE : cookieConverter,
+				COOKIES_TAG
+		);
+	}
+
+	@Nonnull
+	public static String formatText(@Nullable String header, @Nullable List<Param> params, @Nullable String tag,
+			@Nullable Function<Param, String> paramConverter) {
+		if (params == null || params.isEmpty()) {
+			return header == null ? "" : header;
 		}
-		Function<Cookie, String> converter =
-				cookieConverter == null ? DefaultCookieConverter.INSTANCE : cookieConverter;
-		return of(cookies.stream()
-				.map(converter)
-				.filter(c -> c != null && !c.isEmpty())
-				.collect(Collectors.joining(LINE_DELIMITER, COOKIES_TAG + LINE_DELIMITER, ""))).orElse("");
+		String prefix = tag == null ? "" : tag + LINE_DELIMITER;
+		String body = format(params,
+				paramConverter == null ? DefaultFormParamConverter.INSTANCE : paramConverter,
+				null
+		);
+		return (header == null || header.isEmpty() ? "" : header + LINE_DELIMITER + LINE_DELIMITER) + (body.isEmpty() ?
+				body :
+				prefix + BODY_HIGHLIGHT + LINE_DELIMITER + body + LINE_DELIMITER + BODY_HIGHLIGHT);
 	}
 
 	@Nonnull
@@ -92,13 +114,12 @@ public class HttpFormatUtils {
 		}
 		if (body == null || body.isEmpty()) {
 			return header == null ? "" : header;
-		} else {
-			return (header == null || header.isEmpty() ? "" : header + LINE_DELIMITER + LINE_DELIMITER) + (
-					tag == null || tag.isEmpty() ? "" : tag + LINE_DELIMITER) + BODY_HIGHLIGHT + LINE_DELIMITER + (
-					prettiers.containsKey(contentType) ?
-							prettiers.get(contentType).apply(body) :
-							body) + LINE_DELIMITER + BODY_HIGHLIGHT;
 		}
+		return (header == null || header.isEmpty() ? "" : header + LINE_DELIMITER + LINE_DELIMITER) + (tag == null || tag.isEmpty() ?
+				"" :
+				tag + LINE_DELIMITER) + BODY_HIGHLIGHT + LINE_DELIMITER + (prettiers.containsKey(contentType) ?
+				prettiers.get(contentType).apply(body) :
+				body) + LINE_DELIMITER + BODY_HIGHLIGHT;
 	}
 
 	@Nonnull
@@ -123,5 +144,37 @@ public class HttpFormatUtils {
 		cookie.setVersion(version);
 		cookie.setSameSite(sameSite);
 		return cookie;
+	}
+
+	@Nonnull
+	public static List<Param> toForm(@Nullable String formParameters) {
+		return ofNullable(formParameters).map(params -> Arrays.stream(formParameters.split("&"))
+				.map(param -> param.split("=", 2))
+				.map(Arrays::stream)
+				.map(param -> param.map(p -> {
+					try {
+						return URLDecoder.decode(p, StandardCharsets.UTF_8.name());
+					} catch (UnsupportedEncodingException e) {
+						throw new IllegalStateException("Missed standard charset", e);
+					}
+				}).collect(Collectors.toList()))
+				.map(param -> {
+					if (param.isEmpty()) {
+						return new Param("", "");
+					} else if (param.size() < 2) {
+						return new Param(param.get(0), "");
+					} else {
+						return new Param(param.get(0), param.get(1));
+					}
+				})
+				.collect(Collectors.toList())).orElse(Collections.emptyList());
+	}
+
+	@Nonnull
+	public static List<Param> toForm(@Nullable Map<String, String> formParameters) {
+		return ofNullable(formParameters).map(params -> params.entrySet()
+				.stream()
+				.map(e -> new Param(e.getKey(), e.getValue()))
+				.collect(Collectors.toList())).orElse(Collections.emptyList());
 	}
 }

@@ -15,18 +15,18 @@
  */
 apply plugin: 'java-library'
 
-//apply from: "${project.scripts_url}/${project.scripts_branch}/build-quality.gradle"
+apply from: "build-quality.gradle"
 apply from: "${project.scripts_url}/${project.scripts_branch}/release-commons.gradle"
 apply from: "${project.scripts_url}/${project.scripts_branch}/signing.gradle"
-//apply from: "${project.scripts_url}/${project.scripts_branch}/jacoco.gradle"
+apply from: "${project.scripts_url}/${project.scripts_branch}/jacoco.gradle"
 
 project.ext.limits = [
-        'instruction': 60,
-        'branch'     : 30,
-        'line'       : 60,
+        'instruction': 50,
+        'branch'     : 40,
+        'line'       : 45,
         'complexity' : 45,
-        'method'     : 60,
-        'class'      : 83
+        'method'     : 50,
+        'class'      : 60
 ]
 
 sourceCompatibility = JavaVersion.VERSION_1_8
@@ -71,4 +71,4 @@ release {
     }
 }
 
-//build.dependsOn jacocoTestReport
+build.dependsOn jacocoTestReport
