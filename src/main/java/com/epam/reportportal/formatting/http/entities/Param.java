@@ -16,10 +16,34 @@
 
 package com.epam.reportportal.formatting.http.entities;
 
-public enum BodyType {
-	TEXT,
-	FORM,
-	MULTIPART,
-	BINARY,
-	NONE
+import javax.annotation.Nonnull;
+
+public class Param implements Cloneable {
+
+	private final String name;
+	private String value;
+
+	public Param(@Nonnull String paramName, @Nonnull String paramValue) {
+		name = paramName;
+		value = paramValue;
+	}
+
+	@Nonnull
+	public String getName() {
+		return name;
+	}
+
+	@Nonnull
+	public String getValue() {
+		return value;
+	}
+
+	public void setValue(@Nonnull String value) {
+		this.value = value;
+	}
+
+	@Override
+	public Param clone() {
+		return new Param(name, value);
+	}
 }

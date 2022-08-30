@@ -30,7 +30,8 @@ public class HttpFormatUtilsTest {
 		return Arrays.asList(
 				new Object[] { "text/html; charset=utf-16", "text/html" },
 				new Object[] { "application/json", "application/json" },
-				new Object[] { null, "application/octet-stream" }
+				new Object[] { null, "application/octet-stream" },
+				new Object[] { "application/x-www-form-urlencoded; charset=ISO-8859-1", "application/x-www-form-urlencoded" }
 		);
 	}
 
