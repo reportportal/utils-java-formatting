@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+
+## [5.0.3]
 ### Added
 - `HttpRequestFormatter.Builder.bodyParams(List<Param>)` method, by @HardNorth
 
