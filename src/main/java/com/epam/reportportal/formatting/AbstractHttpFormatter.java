@@ -66,7 +66,7 @@ public abstract class AbstractHttpFormatter<SELF extends AbstractHttpFormatter<S
 	 * @param uriConverterFunction      the same as 'headerConvertFunction' param but for URI, default function returns
 	 *                                  URI "as is"
 	 */
-	public AbstractHttpFormatter(@Nonnull LogLevel defaultLogLevel,
+	protected AbstractHttpFormatter(@Nonnull LogLevel defaultLogLevel,
 			@Nullable Function<Header, String> headerConvertFunction,
 			@Nullable Function<Header, String> partHeaderConvertFunction,
 			@Nullable Function<Cookie, String> cookieConvertFunction,
@@ -90,7 +90,7 @@ public abstract class AbstractHttpFormatter<SELF extends AbstractHttpFormatter<S
 		}
 	}
 
-	private void logMultiPartRequest(@Nonnull HttpRequestFormatter formatter) {
+	protected void logMultiPartRequest(@Nonnull HttpRequestFormatter formatter) {
 		Date currentDate = Calendar.getInstance().getTime();
 		String headers = formatter.formatHeaders() + formatter.formatCookies();
 		if (!headers.isEmpty()) {
@@ -111,7 +111,7 @@ public abstract class AbstractHttpFormatter<SELF extends AbstractHttpFormatter<S
 		}
 	}
 
-	private void emitLog(HttpFormatter formatter) {
+	protected void emitLog(HttpFormatter formatter) {
 		BodyType type = formatter.getType();
 		switch (type) {
 			case NONE:
