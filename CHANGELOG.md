@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+### Added
+- `AbstractHttpFormatter` class and `HttpFormatter` interface, by @HardNorth
 
 ## [5.0.3]
 ### Added

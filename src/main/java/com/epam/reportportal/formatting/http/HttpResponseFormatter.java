@@ -23,6 +23,7 @@ import com.epam.reportportal.formatting.http.entities.Cookie;
 import com.epam.reportportal.formatting.http.entities.Header;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -33,7 +34,7 @@ import static com.epam.reportportal.formatting.http.Constants.*;
 import static com.epam.reportportal.formatting.http.HttpFormatUtils.joinParts;
 import static java.util.Optional.ofNullable;
 
-public class HttpResponseFormatter {
+public class HttpResponseFormatter implements HttpFormatter {
 
 	private final int code;
 	private final String phrase;
@@ -55,7 +56,9 @@ public class HttpResponseFormatter {
 		this.phrase = reasonPhrase;
 	}
 
-	public String formatResponse() {
+	@Override
+	@Nonnull
+	public String formatTitle() {
 		return RESPONSE_TAG + LINE_DELIMITER + phrase;
 	}
 
@@ -69,10 +72,13 @@ public class HttpResponseFormatter {
 		return HttpFormatUtils.formatCookies(cookies, cookieConverter);
 	}
 
+	@Override
+	@Nonnull
 	public String formatHead() {
-		return joinParts(LINE_DELIMITER + LINE_DELIMITER, formatResponse(), formatHeaders(), formatCookies());
+		return joinParts(LINE_DELIMITER + LINE_DELIMITER, formatTitle(), formatHeaders(), formatCookies());
 	}
 
+	@Override
 	@Nonnull
 	public BodyType getType() {
 		return type;
@@ -86,6 +92,8 @@ public class HttpResponseFormatter {
 		this.mimeType = mimeType;
 	}
 
+	@Override
+	@Nullable
 	public String getMimeType() {
 		return mimeType;
 	}
@@ -94,6 +102,7 @@ public class HttpResponseFormatter {
 		this.body = body;
 	}
 
+	@Override
 	@Nonnull
 	public String formatAsText() {
 		return HttpFormatUtils.formatText(formatHead(), getTextBody(), BODY_TAG, prettiers, mimeType);
@@ -123,6 +132,8 @@ public class HttpResponseFormatter {
 
 	}
 
+	@Override
+	@Nonnull
 	public byte[] getBinaryBody() {
 		if (BodyType.BINARY == type) {
 			return (byte[]) body;
