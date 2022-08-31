@@ -35,7 +35,7 @@ import static com.epam.reportportal.formatting.http.Constants.*;
 import static com.epam.reportportal.formatting.http.HttpFormatUtils.joinParts;
 import static java.util.Optional.ofNullable;
 
-public class HttpRequestFormatter {
+public class HttpRequestFormatter implements HttpFormatter {
 	private final String method;
 	private final String uri;
 
@@ -58,8 +58,9 @@ public class HttpRequestFormatter {
 		uri = requestUri;
 	}
 
+	@Override
 	@Nonnull
-	public String formatRequest() {
+	public String formatTitle() {
 		return REQUEST_TAG + LINE_DELIMITER + String.format("%s to %s", method, uriConverter.apply(uri));
 	}
 
@@ -73,11 +74,13 @@ public class HttpRequestFormatter {
 		return HttpFormatUtils.formatCookies(cookies, cookieConverter);
 	}
 
+	@Override
 	@Nonnull
 	public String formatHead() {
-		return joinParts(LINE_DELIMITER + LINE_DELIMITER, formatRequest(), formatHeaders(), formatCookies());
+		return joinParts(LINE_DELIMITER + LINE_DELIMITER, formatTitle(), formatHeaders(), formatCookies());
 	}
 
+	@Override
 	@Nonnull
 	public String formatAsText() {
 		if (BodyType.FORM == type) {
@@ -110,11 +113,13 @@ public class HttpRequestFormatter {
 		this.cookies = cookies;
 	}
 
+	@Override
+	@Nullable
 	public String getMimeType() {
 		return mimeType;
 	}
 
-	public void setMimeType(String mimeType) {
+	public void setMimeType(@Nullable String mimeType) {
 		this.mimeType = mimeType;
 	}
 
@@ -122,6 +127,8 @@ public class HttpRequestFormatter {
 		this.type = type;
 	}
 
+	@Override
+	@Nonnull
 	public BodyType getType() {
 		return type;
 	}
@@ -150,6 +157,8 @@ public class HttpRequestFormatter {
 
 	}
 
+	@Override
+	@Nonnull
 	public byte[] getBinaryBody() {
 		if (BodyType.BINARY == type) {
 			return (byte[]) body;
