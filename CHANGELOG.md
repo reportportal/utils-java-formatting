@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+### Fixed
+- Form data type formatting, by @HardNorth
 
 ## [5.1.0]
 ### Added

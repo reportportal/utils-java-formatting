@@ -118,6 +118,7 @@ public abstract class AbstractHttpFormatter<SELF extends AbstractHttpFormatter<S
 				ReportPortal.emitLog(formatter.formatHead(), logLevel, Calendar.getInstance().getTime());
 				break;
 			case TEXT:
+			case FORM:
 				ReportPortal.emitLog(formatter.formatAsText(), logLevel, Calendar.getInstance().getTime());
 				break;
 			case BINARY:
@@ -135,7 +136,7 @@ public abstract class AbstractHttpFormatter<SELF extends AbstractHttpFormatter<S
 				break;
 			default:
 				ReportPortal.emitLog(
-						"Unknown response type: " + type.name(),
+						"Unknown entity type: " + type.name(),
 						LogLevel.ERROR.name(),
 						Calendar.getInstance().getTime()
 				);
