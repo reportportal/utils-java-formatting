@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+### Added
+- Additional multipart type, by @HardNorth
 ### Fixed
 - Response title format for empty phrase, by @HardNorth
 
