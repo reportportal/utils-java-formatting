@@ -5,6 +5,7 @@
 - Additional multipart types, by @HardNorth
 ### Fixed
 - Response title format for empty phrase, by @HardNorth
+- Spacing for binary multipart headers, by @HardNorth
 
 ## [5.1.1]
 ### Fixed
