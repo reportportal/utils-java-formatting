@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+### Fixed
+- Response title format for empty phrase, by @HardNorth
 
 ## [5.1.1]
 ### Fixed

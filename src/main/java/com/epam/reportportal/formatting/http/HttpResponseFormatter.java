@@ -51,7 +51,7 @@ public class HttpResponseFormatter implements HttpFormatter {
 	private String mimeType;
 	private Object body;
 
-	public HttpResponseFormatter(int statusCode, String reasonPhrase) {
+	public HttpResponseFormatter(int statusCode, @Nullable String reasonPhrase) {
 		this.code = statusCode;
 		this.phrase = reasonPhrase;
 	}
@@ -59,7 +59,8 @@ public class HttpResponseFormatter implements HttpFormatter {
 	@Override
 	@Nonnull
 	public String formatTitle() {
-		return RESPONSE_TAG + LINE_DELIMITER + phrase;
+		String text = ofNullable(phrase).filter(p -> !p.trim().isEmpty()).orElseGet(() -> Integer.toString(code));
+		return RESPONSE_TAG + LINE_DELIMITER + text;
 	}
 
 	@Nonnull
