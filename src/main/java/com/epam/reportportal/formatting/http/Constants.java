@@ -41,7 +41,10 @@ public class Constants {
 
 	public static final Set<String> MULTIPART_TYPES = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
 			ContentType.MULTIPART_FORM_DATA.getMimeType(),
-			"multipart/mixed"
+			"multipart/mixed",
+			"multipart/alternative",
+			"multipart/digest",
+			"multipart/parallel"
 	)));
 
 	public static final Set<String> TEXT_TYPES = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(ContentType.APPLICATION_JSON.getMimeType(),
