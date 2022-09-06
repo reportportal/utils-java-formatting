@@ -20,12 +20,11 @@ import com.epam.reportportal.formatting.http.Constants;
 import com.epam.reportportal.formatting.http.entities.Cookie;
 
 import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 
+import static com.epam.reportportal.formatting.http.converters.DefaultCookieConverter.DEFAULT_COOKIE_DATE_FORMAT;
+import static com.epam.reportportal.formatting.http.converters.DefaultCookieConverter.DEFAULT_COOKIE_TIME_ZONE;
 import static java.util.Optional.ofNullable;
 
 public class SanitizingCookieConverter implements Function<Cookie, String> {
@@ -40,9 +39,15 @@ public class SanitizingCookieConverter implements Function<Cookie, String> {
 	public static final Function<Cookie, String> INSTANCE = new SanitizingCookieConverter();
 
 	private final Set<String> sanitizeSet;
+	private final Function<Cookie, String> defaultConverter;
+
+	public SanitizingCookieConverter(Set<String> sanitizeCookies, String datesFormat, TimeZone datesTimeZone) {
+		sanitizeSet = sanitizeCookies;
+		defaultConverter = new DefaultCookieConverter(datesFormat, datesTimeZone);
+	}
 
 	public SanitizingCookieConverter(Set<String> sanitizeCookies) {
-		sanitizeSet = sanitizeCookies;
+		this(sanitizeCookies, DEFAULT_COOKIE_DATE_FORMAT, DEFAULT_COOKIE_TIME_ZONE);
 	}
 
 	private SanitizingCookieConverter() {
@@ -51,12 +56,10 @@ public class SanitizingCookieConverter implements Function<Cookie, String> {
 
 	@Override
 	public @Nullable String apply(@Nullable Cookie cookie) {
-		return DefaultCookieConverter.INSTANCE.apply(ofNullable(cookie).filter(c -> sanitizeSet.contains(cookie.getName()))
-				.map(c -> {
-					Cookie newCookie = c.clone();
-					newCookie.setValue(Constants.REMOVED_TAG);
-					return newCookie;
-				})
-				.orElse(cookie));
+		return defaultConverter.apply(ofNullable(cookie).filter(c -> sanitizeSet.contains(cookie.getName())).map(c -> {
+			Cookie newCookie = c.clone();
+			newCookie.setValue(Constants.REMOVED_TAG);
+			return newCookie;
+		}).orElse(cookie));
 	}
 }

@@ -77,7 +77,7 @@ public class HttpPartFormatter {
 	public String formatForBinaryDataPrefix() {
 		String prefix = formatHeaders();
 		String postfix = BODY_PART_TAG + LINE_DELIMITER + mimeType;
-		return prefix.isEmpty() ? postfix : prefix + LINE_DELIMITER + postfix;
+		return prefix.isEmpty() ? postfix : prefix + LINE_DELIMITER + LINE_DELIMITER + postfix;
 	}
 
 	public PartType getType() {

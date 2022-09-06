@@ -51,7 +51,7 @@ public class HttpResponseFormatter implements HttpFormatter {
 	private String mimeType;
 	private Object body;
 
-	public HttpResponseFormatter(int statusCode, String reasonPhrase) {
+	public HttpResponseFormatter(int statusCode, @Nullable String reasonPhrase) {
 		this.code = statusCode;
 		this.phrase = reasonPhrase;
 	}
@@ -59,7 +59,8 @@ public class HttpResponseFormatter implements HttpFormatter {
 	@Override
 	@Nonnull
 	public String formatTitle() {
-		return RESPONSE_TAG + LINE_DELIMITER + phrase;
+		String text = ofNullable(phrase).filter(p -> !p.trim().isEmpty()).orElseGet(() -> Integer.toString(code));
+		return RESPONSE_TAG + LINE_DELIMITER + text;
 	}
 
 	@Nonnull
@@ -182,9 +183,14 @@ public class HttpResponseFormatter implements HttpFormatter {
 			return this;
 		}
 
+		public Builder addCookie(Cookie cookie) {
+			cookies.add(cookie);
+			return this;
+		}
+
 		public Builder addCookie(String name, String value, String comment, String path, String domain, Long maxAge,
 				Boolean secured, Boolean httpOnly, Date expiryDate, Integer version, String sameSite) {
-			cookies.add(HttpFormatUtils.toCookie(name,
+			return addCookie(HttpFormatUtils.toCookie(name,
 					value,
 					comment,
 					path,
@@ -196,7 +202,6 @@ public class HttpResponseFormatter implements HttpFormatter {
 					version,
 					sameSite
 			));
-			return this;
 		}
 
 		public Builder addCookie(String name, String value) {

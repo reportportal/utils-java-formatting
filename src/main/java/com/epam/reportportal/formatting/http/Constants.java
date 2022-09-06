@@ -39,10 +39,15 @@ public class Constants {
 	public static final String BODY_PART_TAG = "**Body part**";
 	public static final String BODY_HIGHLIGHT = "```";
 
-	public static final Set<String> MULTIPART_TYPES = Collections.singleton(ContentType.MULTIPART_FORM_DATA.getMimeType());
+	public static final Set<String> MULTIPART_TYPES = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
+			ContentType.MULTIPART_FORM_DATA.getMimeType(),
+			"multipart/mixed",
+			"multipart/alternative",
+			"multipart/digest",
+			"multipart/parallel"
+	)));
 
-	public static final Set<String> TEXT_TYPES = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
-			ContentType.APPLICATION_JSON.getMimeType(),
+	public static final Set<String> TEXT_TYPES = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(ContentType.APPLICATION_JSON.getMimeType(),
 			ContentType.TEXT_PLAIN.getMimeType(),
 			ContentType.TEXT_HTML.getMimeType(),
 			ContentType.TEXT_XML.getMimeType(),
@@ -52,8 +57,8 @@ public class Constants {
 
 	public static final Set<String> FORM_TYPES = Collections.singleton(ContentType.APPLICATION_FORM_URLENCODED.getMimeType());
 
-	public static final Map<String, BodyType> BODY_TYPE_MAP = Collections.unmodifiableMap(Stream.of(
-			TEXT_TYPES.stream().collect(Collectors.toMap(k -> k, v -> BodyType.TEXT)),
+	public static final Map<String, BodyType> BODY_TYPE_MAP = Collections.unmodifiableMap(Stream.of(TEXT_TYPES.stream()
+					.collect(Collectors.toMap(k -> k, v -> BodyType.TEXT)),
 			FORM_TYPES.stream().collect(Collectors.toMap(k -> k, v -> BodyType.FORM)),
 			MULTIPART_TYPES.stream().collect(Collectors.toMap(k -> k, v -> BodyType.MULTIPART))
 	).flatMap(m -> m.entrySet().stream()).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
