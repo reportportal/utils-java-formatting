@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Added
 - Additional multipart types, by @HardNorth
+- `HttpFormatter.Builder.addCookie(Cookie)` methods, by @HardNorth
 ### Fixed
 - Response title format for empty phrase, by @HardNorth
 - Spacing for binary multipart headers, by @HardNorth

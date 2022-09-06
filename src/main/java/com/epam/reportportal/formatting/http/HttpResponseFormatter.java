@@ -183,9 +183,14 @@ public class HttpResponseFormatter implements HttpFormatter {
 			return this;
 		}
 
+		public Builder addCookie(Cookie cookie) {
+			cookies.add(cookie);
+			return this;
+		}
+
 		public Builder addCookie(String name, String value, String comment, String path, String domain, Long maxAge,
 				Boolean secured, Boolean httpOnly, Date expiryDate, Integer version, String sameSite) {
-			cookies.add(HttpFormatUtils.toCookie(name,
+			return addCookie(HttpFormatUtils.toCookie(name,
 					value,
 					comment,
 					path,
@@ -197,7 +202,6 @@ public class HttpResponseFormatter implements HttpFormatter {
 					version,
 					sameSite
 			));
-			return this;
 		}
 
 		public Builder addCookie(String name, String value) {
