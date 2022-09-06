@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+
+## [5.1.2]
 ### Added
 - Additional multipart types, by @HardNorth
 - `HttpFormatter.Builder.addCookie(Cookie)` methods, by @HardNorth
