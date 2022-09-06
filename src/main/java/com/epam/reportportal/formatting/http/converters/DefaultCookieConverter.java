@@ -18,16 +18,21 @@ package com.epam.reportportal.formatting.http.converters;
 
 import com.epam.reportportal.formatting.http.entities.Cookie;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.text.SimpleDateFormat;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.function.Function;
 
 import static java.util.Optional.ofNullable;
 
 public class DefaultCookieConverter implements Function<Cookie, String> {
 	public static final String DEFAULT_COOKIE_DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss z";
+
+	public static final TimeZone DEFAULT_COOKIE_TIME_ZONE = TimeZone.getTimeZone(ZoneId.of("UTC"));
 
 	private static final int UNDEFINED = -1;
 	private static final String COMMENT = "Comment";
@@ -46,7 +51,16 @@ public class DefaultCookieConverter implements Function<Cookie, String> {
 
 	public static final Function<Cookie, String> INSTANCE = new DefaultCookieConverter();
 
-	private DefaultCookieConverter() {
+	private final String dateFormat;
+	private final TimeZone timeZone;
+
+	public DefaultCookieConverter(@Nonnull String datesFormat, @Nonnull TimeZone datesTimeZone) {
+		dateFormat = datesFormat;
+		timeZone = datesTimeZone;
+	}
+
+	public DefaultCookieConverter() {
+		this(DEFAULT_COOKIE_DATE_FORMAT, DEFAULT_COOKIE_TIME_ZONE);
 	}
 
 	@SuppressWarnings("ConstantConditions")
@@ -64,8 +78,10 @@ public class DefaultCookieConverter implements Function<Cookie, String> {
 					.ifPresent(secured -> cookieValues.add(SECURE + ATTRIBUTE_VALUE + secured));
 			ofNullable(c.getHttpOnly()).filter(h -> h)
 					.ifPresent(httpOnly -> cookieValues.add(HTTP_ONLY + ATTRIBUTE_VALUE + httpOnly));
+			SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
+			sdf.setTimeZone(timeZone);
 			ofNullable(c.getExpiryDate()).ifPresent(expireDate -> cookieValues.add(
-					EXPIRES + ATTRIBUTE_VALUE + new SimpleDateFormat(DEFAULT_COOKIE_DATE_FORMAT).format(expireDate)));
+					EXPIRES + ATTRIBUTE_VALUE + sdf.format(expireDate)));
 			ofNullable(c.getVersion()).ifPresent(version -> cookieValues.add(VERSION + ATTRIBUTE_VALUE + version));
 			ofNullable(c.getSameSite()).ifPresent(sameSite -> cookieValues.add(SAME_SITE + ATTRIBUTE_VALUE + sameSite));
 			return cookieValues.isEmpty() ?

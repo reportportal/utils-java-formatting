@@ -4,7 +4,8 @@
 ### Added
 - Additional multipart types, by @HardNorth
 - `HttpFormatter.Builder.addCookie(Cookie)` methods, by @HardNorth
-- `DefaultCookieConverter.DEFAULT_COOKIE_DATE_FORMAT` constant, which is used to format Cookie Expiry Date, by @HardNorth
+- `DefaultCookieConverter.DEFAULT_COOKIE_DATE_FORMAT` and `DefaultCookieConverter.DEFAULT_COOKIE_TIME_ZONE` constants, which are used to format Cookie Expiry Date, by @HardNorth
+- Date Format and Time Zone bypass in Cookie converter constructors, by @HardNorth
 ### Fixed
 - Response title format for empty phrase, by @HardNorth
 - Spacing for binary multipart headers, by @HardNorth
