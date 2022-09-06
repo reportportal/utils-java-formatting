@@ -27,6 +27,7 @@ import java.util.function.Function;
 import static java.util.Optional.ofNullable;
 
 public class DefaultCookieConverter implements Function<Cookie, String> {
+	public static final String DEFAULT_COOKIE_DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss z";
 
 	private static final int UNDEFINED = -1;
 	private static final String COMMENT = "Comment";
@@ -64,7 +65,7 @@ public class DefaultCookieConverter implements Function<Cookie, String> {
 			ofNullable(c.getHttpOnly()).filter(h -> h)
 					.ifPresent(httpOnly -> cookieValues.add(HTTP_ONLY + ATTRIBUTE_VALUE + httpOnly));
 			ofNullable(c.getExpiryDate()).ifPresent(expireDate -> cookieValues.add(
-					EXPIRES + ATTRIBUTE_VALUE + new SimpleDateFormat().format(expireDate)));
+					EXPIRES + ATTRIBUTE_VALUE + new SimpleDateFormat(DEFAULT_COOKIE_DATE_FORMAT).format(expireDate)));
 			ofNullable(c.getVersion()).ifPresent(version -> cookieValues.add(VERSION + ATTRIBUTE_VALUE + version));
 			ofNullable(c.getSameSite()).ifPresent(sameSite -> cookieValues.add(SAME_SITE + ATTRIBUTE_VALUE + sameSite));
 			return cookieValues.isEmpty() ?
