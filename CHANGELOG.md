@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+### Changed
+- `jsoup` version update to fix vulnerabilities, by @HardNorth
 
 ## [5.1.2]
 ### Added
