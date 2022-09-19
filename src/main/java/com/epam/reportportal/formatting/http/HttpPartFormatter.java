@@ -150,6 +150,11 @@ public class HttpPartFormatter {
 		private Function<Header, String> headerConverter;
 		private Map<String, Function<String, String>> prettiers;
 
+		/***
+		 *
+		 * @deprecated the constructor does not accept charset and should be removed
+		 */
+		@Deprecated
 		public Builder(@Nonnull PartType partType, @Nonnull File body) throws IOException {
 			type = partType;
 			TypeAwareByteSource file = Utils.getFile(body);

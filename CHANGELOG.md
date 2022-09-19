@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+### Added
+- Deprecation warning on invalid constructor in `HttpPartFormatter` class, by @HardNorth
 ### Changed
 - `jsoup` version update to fix vulnerabilities, by @HardNorth
 
