@@ -216,13 +216,20 @@ public class HttpFormatUtils {
 	}
 
 	@Nonnull
-	public static List<Param> toForm(@Nullable String formParameters) {
+	private static Charset getCharset(@Nullable String contentType) {
+		return ofNullable(contentType).flatMap(h -> toKeyValue(h).filter(p -> "charset".equalsIgnoreCase(p.getKey()))
+				.findAny()).map(Pair::getValue).map(Charset::forName).orElse(StandardCharsets.UTF_8);
+	}
+
+	@Nonnull
+	public static List<Param> toForm(@Nullable String formParameters, @Nullable String contentType) {
+		Charset charset = getCharset(contentType);
 		return ofNullable(formParameters).map(params -> Arrays.stream(formParameters.split("&"))
 				.map(param -> param.split("=", 2))
 				.map(Arrays::stream)
 				.map(param -> param.map(p -> {
 					try {
-						return URLDecoder.decode(p, StandardCharsets.UTF_8.name());
+						return URLDecoder.decode(p, charset.name());
 					} catch (UnsupportedEncodingException e) {
 						throw new IllegalStateException("Missed standard charset", e);
 					}
@@ -237,6 +244,11 @@ public class HttpFormatUtils {
 					}
 				})
 				.collect(Collectors.toList())).orElse(Collections.emptyList());
+	}
+
+	@Nonnull
+	public static List<Param> toForm(@Nullable String formParameters) {
+		return toForm(formParameters, null);
 	}
 
 	@Nonnull
