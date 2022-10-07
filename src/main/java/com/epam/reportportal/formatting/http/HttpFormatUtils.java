@@ -134,6 +134,18 @@ public class HttpFormatUtils {
 	}
 
 	@Nonnull
+	public static Header toHeader(@Nonnull String nameValuePair) {
+		String[] nameValue = nameValuePair.split(": ", 2);
+		if (nameValue.length == 0) {
+			// invalid header?
+			return new Header("", "");
+		} else if (nameValue.length == 1) {
+			return new Header(nameValue[0], "");
+		}
+		return new Header(nameValue[0], nameValue[1]);
+	}
+
+	@Nonnull
 	public static Stream<Pair<String, String>> toKeyValue(@Nonnull String headerValue) {
 		return Arrays.stream(headerValue.split(";\\s*")).map(c -> c.split("=", 2)).map(kv -> {
 			if (kv.length > 1) {
