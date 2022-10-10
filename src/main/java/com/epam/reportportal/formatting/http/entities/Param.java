@@ -42,7 +42,9 @@ public class Param implements Cloneable {
 		this.value = value;
 	}
 
+	@Nonnull
 	@Override
+	@SuppressWarnings("MethodDoesntCallSuperMethod")
 	public Param clone() {
 		return new Param(name, value);
 	}

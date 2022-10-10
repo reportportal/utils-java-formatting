@@ -17,10 +17,12 @@
 package com.epam.reportportal.formatting.http;
 
 import com.epam.reportportal.formatting.http.entities.BodyType;
+import com.epam.reportportal.formatting.http.entities.Cookie;
+import com.epam.reportportal.formatting.http.entities.Header;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.Arrays;
+import java.util.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -78,5 +80,82 @@ public class HttpFormatUtilsTest {
 	@MethodSource("bodyTypes")
 	public void testGetBodyType(String contentType, BodyType expected) {
 		assertThat(HttpFormatUtils.getBodyType(contentType), equalTo(expected));
+	}
+
+	public static Iterable<Object[]> headerValues() {
+		return Arrays.asList(
+				new Object[] { "Content-Type: multipart/form-data; boundary=LjalBsLkAYGgsOfzTPStiqo8-Ur9wnV9",
+						"Content-Type", "multipart/form-data; boundary=LjalBsLkAYGgsOfzTPStiqo8-Ur9wnV9" },
+				new Object[] { "Host: docker.local:8080", "Host", "docker.local:8080" },
+				new Object[] { "X-Custom-Header: a: b", "X-Custom-Header", "a: b" },
+				new Object[] { "X-Custom-Header: ", "X-Custom-Header", "" },
+				new Object[] { "X-Custom-Header", "X-Custom-Header", "" },
+				new Object[] { "", "", "" }
+		);
+	}
+
+	@ParameterizedTest
+	@MethodSource("headerValues")
+	public void testToHeader(String headerLine, String expectedKey, String expectedValue) {
+		Header header = HttpFormatUtils.toHeader(headerLine);
+		assertThat(header.getName(), equalTo(expectedKey));
+		assertThat(header.getValue(), equalTo(expectedValue));
+	}
+
+	public static final String DATE_STR = "Tue, 06 Sep 2022 09:32:51 UTC";
+	public static final Calendar DATE_CAL = new GregorianCalendar(2022, Calendar.SEPTEMBER, 6, 9, 32, 51);
+
+	static {
+		DATE_CAL.setTimeZone(TimeZone.getTimeZone("UTC"));
+	}
+
+	public static Iterable<Object[]> cookieValues() {
+		return Arrays.asList(
+				new Object[] { "test=value", "test", "value", null, null, false, false },
+				new Object[] { "test=value; expires=" + DATE_STR + "; path=/; secure; httponly", "test", "value",
+						DATE_CAL.getTime(), "/", true, true }
+		);
+	}
+
+	@ParameterizedTest
+	@MethodSource("cookieValues")
+	public void testToCookie(String headerLine, String name, String value, Date date, String path, boolean secure,
+			boolean http) {
+		Cookie cookie = HttpFormatUtils.toCookie(headerLine);
+		assertThat(cookie.getName(), equalTo(name));
+		assertThat(cookie.getValue(), equalTo(value));
+		assertThat(cookie.getValue(), equalTo(value));
+		assertThat(cookie.getExpiryDate(), equalTo(date));
+		assertThat(cookie.getPath(), equalTo(path));
+		assertThat(cookie.getSecured(), equalTo(secure));
+		assertThat(cookie.getHttpOnly(), equalTo(http));
+	}
+
+	public static Iterable<Object[]> cookieHeaders() {
+		return Arrays.asList(
+				new Object[] { "cookie", true },
+				new Object[] { "Cookie", true },
+				new Object[] { "Cook", false }
+		);
+	}
+
+	@ParameterizedTest
+	@MethodSource("cookieHeaders")
+	public void testIsCookie(String header, boolean expectedResult) {
+		assertThat(HttpFormatUtils.isCookie(header), equalTo(expectedResult));
+	}
+
+	public static Iterable<Object[]> setCookieHeaders() {
+		return Arrays.asList(
+				new Object[] { "set-cookie", true },
+				new Object[] { "Set-Cookie", true },
+				new Object[] { "setcookie", false }
+		);
+	}
+
+	@ParameterizedTest
+	@MethodSource("setCookieHeaders")
+	public void testIsSetCookie(String header, boolean expectedResult) {
+		assertThat(HttpFormatUtils.isSetCookie(header), equalTo(expectedResult));
 	}
 }

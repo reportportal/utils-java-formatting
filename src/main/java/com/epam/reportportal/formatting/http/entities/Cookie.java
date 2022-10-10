@@ -136,6 +136,7 @@ public class Cookie implements Cloneable {
 
 	@Nonnull
 	@Override
+	@SuppressWarnings("MethodDoesntCallSuperMethod")
 	public Cookie clone() {
 		Cookie clone = new Cookie(name);
 		clone.value = value;
