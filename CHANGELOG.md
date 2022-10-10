@@ -1,6 +1,13 @@
 # Changelog
 
 ## [Unreleased]
+### Added
+- Deprecation warning on invalid constructor in `HttpPartFormatter` class, by @HardNorth
+- Cookie utility methods in `HttpFormatUtils` class, by @HardNorth
+- Header string parsing method  in `HttpFormatUtils` class, by @HardNorth
+- Charset parsing from content type header for Form request, by @HardNorth
+### Changed
+- `jsoup` version update to fix vulnerabilities, by @HardNorth
 
 ## [5.1.2]
 ### Added

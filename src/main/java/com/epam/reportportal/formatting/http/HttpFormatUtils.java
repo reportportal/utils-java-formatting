@@ -23,16 +23,21 @@ import com.epam.reportportal.formatting.http.entities.BodyType;
 import com.epam.reportportal.formatting.http.entities.Cookie;
 import com.epam.reportportal.formatting.http.entities.Header;
 import com.epam.reportportal.formatting.http.entities.Param;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.entity.ContentType;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.epam.reportportal.formatting.http.Constants.*;
 import static java.util.Optional.of;
@@ -129,6 +134,32 @@ public class HttpFormatUtils {
 	}
 
 	@Nonnull
+	public static Header toHeader(@Nonnull String nameValuePair) {
+		String[] nameValue = nameValuePair.split(": ", 2);
+		if (nameValue.length == 0) {
+			// invalid header?
+			return new Header("", "");
+		} else if (nameValue.length == 1) {
+			return new Header(nameValue[0], "");
+		}
+		return new Header(nameValue[0], nameValue[1]);
+	}
+
+	@Nonnull
+	public static Stream<Pair<String, String>> toKeyValue(@Nonnull String headerValue) {
+		return Arrays.stream(headerValue.split(";\\s*")).map(c -> c.split("=", 2)).map(kv -> {
+			if (kv.length > 1) {
+				try {
+					return Pair.of(kv[0], URLDecoder.decode(kv[1], Charset.defaultCharset().name()));
+				} catch (UnsupportedEncodingException e) {
+					throw new IllegalStateException(e);
+				}
+			}
+			return Pair.of(kv[0], "");
+		});
+	}
+
+	@Nonnull
 	public static Cookie toCookie(@Nonnull String name, @Nullable String value, @Nullable String comment,
 			@Nullable String path, @Nullable String domain, @Nullable Long maxAge, @Nullable Boolean secured,
 			@Nullable Boolean httpOnly, @Nullable Date expiryDate, @Nullable Integer version,
@@ -148,13 +179,69 @@ public class HttpFormatUtils {
 	}
 
 	@Nonnull
-	public static List<Param> toForm(@Nullable String formParameters) {
+	public static Cookie toCookie(@Nonnull String headerValue) {
+		List<Pair<String, String>> cookieValues = toKeyValue(headerValue).collect(Collectors.toList());
+		Pair<String, String> nameValue = cookieValues.get(0);
+		Map<String, String> cookieMetadata = cookieValues.subList(1, cookieValues.size())
+				.stream()
+				.collect(Collectors.toMap(kv -> kv.getKey().toLowerCase(Locale.US), Pair<String, String>::getValue));
+		String comment = cookieMetadata.get("comment");
+		String path = cookieMetadata.get("path");
+		String domain = cookieMetadata.get("domain");
+		Long maxAge = cookieMetadata.get("maxage") == null ? null : Long.valueOf(cookieMetadata.get("maxage"));
+		Boolean secure = cookieMetadata.containsKey("secure");
+		Boolean httpOnly = cookieMetadata.containsKey("httponly");
+		// Examples: Tue, 06 Sep 2022 09:32:51 GMT
+		//           Wed, 06-Sep-2023 11:22:09 GMT
+		Date expiryDate = ofNullable(cookieMetadata.get("expires")).map(d -> {
+			try {
+				return new SimpleDateFormat(DefaultCookieConverter.DEFAULT_COOKIE_DATE_FORMAT).parse(d.replace('-',
+						' '
+				));
+			} catch (ParseException e) {
+				return null;
+			}
+		}).orElse(null);
+		Integer version = cookieMetadata.get("version") == null ? null : Integer.valueOf(cookieMetadata.get("version"));
+		String sameSite = cookieMetadata.get("samesite");
+
+		return toCookie(nameValue.getKey(),
+				nameValue.getValue(),
+				comment,
+				path,
+				domain,
+				maxAge,
+				secure,
+				httpOnly,
+				expiryDate,
+				version,
+				sameSite
+		);
+	}
+
+	public static boolean isCookie(@Nullable String headerName) {
+		return "cookie".equalsIgnoreCase(headerName);
+	}
+
+	public static boolean isSetCookie(@Nullable String headerName) {
+		return "set-cookie".equalsIgnoreCase(headerName);
+	}
+
+	@Nonnull
+	private static Charset getCharset(@Nullable String contentType) {
+		return ofNullable(contentType).flatMap(h -> toKeyValue(h).filter(p -> "charset".equalsIgnoreCase(p.getKey()))
+				.findAny()).map(Pair::getValue).map(Charset::forName).orElse(StandardCharsets.UTF_8);
+	}
+
+	@Nonnull
+	public static List<Param> toForm(@Nullable String formParameters, @Nullable String contentType) {
+		Charset charset = getCharset(contentType);
 		return ofNullable(formParameters).map(params -> Arrays.stream(formParameters.split("&"))
 				.map(param -> param.split("=", 2))
 				.map(Arrays::stream)
 				.map(param -> param.map(p -> {
 					try {
-						return URLDecoder.decode(p, StandardCharsets.UTF_8.name());
+						return URLDecoder.decode(p, charset.name());
 					} catch (UnsupportedEncodingException e) {
 						throw new IllegalStateException("Missed standard charset", e);
 					}
@@ -169,6 +256,11 @@ public class HttpFormatUtils {
 					}
 				})
 				.collect(Collectors.toList())).orElse(Collections.emptyList());
+	}
+
+	@Nonnull
+	public static List<Param> toForm(@Nullable String formParameters) {
+		return toForm(formParameters, null);
 	}
 
 	@Nonnull

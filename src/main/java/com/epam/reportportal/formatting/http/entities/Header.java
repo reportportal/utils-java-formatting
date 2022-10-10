@@ -42,7 +42,9 @@ public class Header implements Cloneable {
 		this.value = value;
 	}
 
+	@Nonnull
 	@Override
+	@SuppressWarnings("MethodDoesntCallSuperMethod")
 	public Header clone() {
 		return new Header(name, value);
 	}
