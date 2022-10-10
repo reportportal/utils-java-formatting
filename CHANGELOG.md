@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+
+## [5.1.3]
 ### Added
 - Deprecation warning on invalid constructor in `HttpPartFormatter` class, by @HardNorth
 - Cookie utility methods in `HttpFormatUtils` class, by @HardNorth
