@@ -16,6 +16,7 @@
 
 package com.epam.reportportal.formatting;
 
+import com.epam.reportportal.formatting.http.ContentType;
 import com.epam.reportportal.formatting.http.HttpFormatter;
 import com.epam.reportportal.formatting.http.HttpPartFormatter;
 import com.epam.reportportal.formatting.http.HttpRequestFormatter;
@@ -29,7 +30,6 @@ import com.epam.reportportal.service.Launch;
 import com.epam.reportportal.service.ReportPortal;
 import com.epam.reportportal.service.step.StepReporter;
 import com.google.common.io.ByteSource;
-import org.apache.http.entity.ContentType;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -125,7 +125,7 @@ public abstract class AbstractHttpFormatter<SELF extends AbstractHttpFormatter<S
 				attachAsBinary(
 						formatter.formatHead(),
 						formatter.getBinaryBody(),
-						ofNullable(formatter.getMimeType()).orElse(ContentType.APPLICATION_OCTET_STREAM.getMimeType())
+						ofNullable(formatter.getMimeType()).orElse(ContentType.APPLICATION_OCTET_STREAM)
 				);
 				break;
 			case MULTIPART:

@@ -42,7 +42,6 @@ dependencies {
     api 'com.epam.reportportal:commons-model:5.0.0'
 
     implementation 'org.jsoup:jsoup:1.15.3'
-    implementation 'org.apache.httpcomponents:httpcore:4.4.15'
 
     testImplementation 'com.epam.reportportal:agent-java-test-utils:0.0.2'
 
@@ -54,6 +53,7 @@ dependencies {
     testImplementation 'org.hamcrest:hamcrest-core:2.2'
     testImplementation "org.mockito:mockito-core:${mockito_version}"
     testImplementation "org.mockito:mockito-inline:${mockito_version}"
+    testImplementation 'org.apache.httpcomponents:httpcore:4.4.15'
 }
 
 test {

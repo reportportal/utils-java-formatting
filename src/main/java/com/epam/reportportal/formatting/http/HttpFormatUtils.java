@@ -24,7 +24,6 @@ import com.epam.reportportal.formatting.http.entities.Cookie;
 import com.epam.reportportal.formatting.http.entities.Header;
 import com.epam.reportportal.formatting.http.entities.Param;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.http.entity.ContentType;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -49,13 +48,15 @@ public class HttpFormatUtils {
 		throw new IllegalStateException("Static only class");
 	}
 
+	@Nonnull
 	public static String getMimeType(@Nullable String contentType) {
 		return ofNullable(contentType).filter(ct -> !ct.isEmpty())
-				.map(ct -> ContentType.parse(contentType).getMimeType())
-				.orElse(ContentType.APPLICATION_OCTET_STREAM.getMimeType());
+				.map(ct -> ContentType.parse(contentType))
+				.orElse(ContentType.APPLICATION_OCTET_STREAM);
 	}
 
-	public static String joinParts(String delimiter, String... parts) {
+	@Nonnull
+	public static String joinParts(@Nonnull String delimiter, @Nullable String... parts) {
 		if (parts == null) {
 			return "";
 		}
@@ -276,7 +277,7 @@ public class HttpFormatUtils {
 		if (contentType == null || contentType.isEmpty()) {
 			return BodyType.NONE;
 		}
-		String mimeType = ContentType.parse(contentType).getMimeType();
+		String mimeType = ContentType.parse(contentType);
 		return ofNullable(typeMap).map(m -> m.getOrDefault(mimeType, BodyType.BINARY)).orElse(BodyType.BINARY);
 	}
 
