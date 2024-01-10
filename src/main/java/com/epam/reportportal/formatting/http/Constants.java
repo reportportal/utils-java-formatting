@@ -74,4 +74,8 @@ public class Constants {
 		put("text/json", JsonPrettier.INSTANCE);
 		put(ContentType.TEXT_HTML, HtmlPrettier.INSTANCE);
 	}});
+
+	private Constants() {
+		throw new RuntimeException("No instances should exist for the class!");
+	}
 }

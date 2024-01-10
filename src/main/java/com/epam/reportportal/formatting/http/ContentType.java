@@ -16,6 +16,8 @@
 
 package com.epam.reportportal.formatting.http;
 
+import javax.annotation.Nullable;
+
 @SuppressWarnings("unused")
 public class ContentType {
 
@@ -51,5 +53,15 @@ public class ContentType {
 	public static final String MULTIPART_DIGEST = "multipart/digest";
 	public static final String MULTIPART_PARALLEL = "multipart/parallel";
 
+	private ContentType() {
+		throw new RuntimeException("No instances should exist for the class!");
+	}
 
+	@Nullable
+	public static String parse(@Nullable String contentType) {
+		if (contentType == null || contentType.trim().isEmpty()) {
+			return null;
+		}
+		return null;
+	}
 }
