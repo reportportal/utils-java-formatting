@@ -17,9 +17,12 @@
 package com.epam.reportportal.formatting.http;
 
 import javax.annotation.Nullable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @SuppressWarnings("unused")
 public class ContentType {
+	private static final Pattern HTTP_HEADER_DELIMITER_PATTERN = Pattern.compile("[=;,]");
 
 	// Binary types
 	public static final String APPLICATION_OCTET_STREAM = "application/octet-stream";
@@ -62,6 +65,14 @@ public class ContentType {
 		if (contentType == null || contentType.trim().isEmpty()) {
 			return null;
 		}
-		return null;
+		String trimmed = contentType.trim();
+		Matcher m = HTTP_HEADER_DELIMITER_PATTERN.matcher(trimmed);
+		String mimeType;
+		if (m.find()) {
+			mimeType = trimmed.substring(0, m.start());
+		} else {
+			mimeType = trimmed;
+		}
+		return mimeType.isEmpty() ? null : mimeType;
 	}
 }
