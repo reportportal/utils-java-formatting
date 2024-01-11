@@ -24,7 +24,7 @@ import com.epam.reportportal.formatting.http.entities.BodyType;
 import com.epam.reportportal.formatting.http.entities.Cookie;
 import com.epam.reportportal.formatting.http.entities.Header;
 import com.epam.reportportal.formatting.http.entities.Param;
-import org.apache.http.entity.ContentType;
+import com.epam.reportportal.utils.http.ContentType;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -233,7 +233,7 @@ public class HttpRequestFormatter implements HttpFormatter {
 		}
 
 		public Builder addCookie(String name, String value, String comment, String path, String domain, Long maxAge,
-				Boolean secured, Boolean httpOnly, Date expiryDate, Integer version, String sameSite) {
+		                         Boolean secured, Boolean httpOnly, Date expiryDate, Integer version, String sameSite) {
 			return addCookie(HttpFormatUtils.toCookie(name,
 					value,
 					comment,
@@ -272,21 +272,21 @@ public class HttpRequestFormatter implements HttpFormatter {
 
 		public Builder bodyParams(List<Param> formParameters) {
 			type = BodyType.FORM;
-			this.mimeType = ContentType.APPLICATION_FORM_URLENCODED.getMimeType();
+			this.mimeType = ContentType.APPLICATION_FORM_URLENCODED;
 			body = formParameters;
 			return this;
 		}
 
 		public Builder bodyParams(Map<String, String> formParameters) {
 			type = BodyType.FORM;
-			this.mimeType = ContentType.APPLICATION_FORM_URLENCODED.getMimeType();
+			this.mimeType = ContentType.APPLICATION_FORM_URLENCODED;
 			body = HttpFormatUtils.toForm(formParameters);
 			return this;
 		}
 
 		public Builder bodyParams(String formParameters) {
 			type = BodyType.FORM;
-			this.mimeType = ContentType.APPLICATION_FORM_URLENCODED.getMimeType();
+			this.mimeType = ContentType.APPLICATION_FORM_URLENCODED;
 			body = HttpFormatUtils.toForm(formParameters);
 			return this;
 		}

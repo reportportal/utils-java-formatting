@@ -1,6 +1,10 @@
 # Changelog
 
 ## [Unreleased]
+### Changed
+- Client version updated on [5.2.0](https://github.com/reportportal/client-java/releases/tag/5.2.0), by @HardNorth
+### Removed
+- HttpCore dependency was removed to avoid conflicts, by @HardNorth
 
 ## [5.1.6]
 ### Changed
