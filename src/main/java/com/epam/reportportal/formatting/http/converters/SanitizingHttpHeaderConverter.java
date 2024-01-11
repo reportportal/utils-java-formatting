@@ -17,7 +17,6 @@
 package com.epam.reportportal.formatting.http.converters;
 
 import com.epam.reportportal.formatting.http.entities.Header;
-import com.google.common.net.HttpHeaders;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
@@ -30,7 +29,7 @@ import static java.util.Optional.ofNullable;
 
 public class SanitizingHttpHeaderConverter implements Function<Header, String> {
 	public static final Set<String> SENSITIVE_HEADERS = Collections.unmodifiableSet(new HashSet<>(Collections.singletonList(
-			HttpHeaders.AUTHORIZATION)));
+			"Authorization")));
 
 	public static final Function<Header, String> INSTANCE = new SanitizingHttpHeaderConverter();
 

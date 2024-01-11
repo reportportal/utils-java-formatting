@@ -33,7 +33,7 @@ public class SanitizingUriConverter implements Function<String, String> {
 					.map(info -> info.split(":", 2))
 					.map(info -> {
 						if (info.length > 1) {
-							return new String[] { info[0], REMOVED_TAG };
+							return new String[]{info[0], REMOVED_TAG};
 						}
 						return info;
 					})
