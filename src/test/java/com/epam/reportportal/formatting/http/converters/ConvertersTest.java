@@ -23,7 +23,6 @@ import com.epam.reportportal.formatting.http.prettiers.HtmlPrettier;
 import com.epam.reportportal.formatting.http.prettiers.JsonPrettier;
 import com.epam.reportportal.formatting.http.prettiers.Prettier;
 import com.epam.reportportal.formatting.http.prettiers.XmlPrettier;
-import com.google.common.net.HttpHeaders;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -62,10 +61,10 @@ public class ConvertersTest {
 
 	public static Iterable<Object[]> headerCases() {
 		return Arrays.asList(
-				new Object[] { new Header(HttpHeaders.AUTHORIZATION, "Bearer test_token"),
-						HttpHeaders.AUTHORIZATION + ": " + Constants.REMOVED_TAG },
+				new Object[] { new Header("Authorization", "Bearer test_token"),
+						"Authorization: " + Constants.REMOVED_TAG },
 				new Object[] { null, null },
-				new Object[] { new Header(HttpHeaders.ACCEPT, "*/*"), HttpHeaders.ACCEPT + ": \\*/\\*" }
+				new Object[] { new Header("Accept", "*/*"), "Accept: \\*/\\*" }
 		);
 	}
 
