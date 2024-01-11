@@ -16,7 +16,6 @@
 
 package com.epam.reportportal.formatting;
 
-import com.epam.reportportal.formatting.http.ContentType;
 import com.epam.reportportal.formatting.http.HttpFormatter;
 import com.epam.reportportal.formatting.http.HttpPartFormatter;
 import com.epam.reportportal.formatting.http.HttpRequestFormatter;
@@ -29,7 +28,8 @@ import com.epam.reportportal.message.ReportPortalMessage;
 import com.epam.reportportal.service.Launch;
 import com.epam.reportportal.service.ReportPortal;
 import com.epam.reportportal.service.step.StepReporter;
-import com.google.common.io.ByteSource;
+import com.epam.reportportal.utils.files.ByteSource;
+import com.epam.reportportal.utils.http.ContentType;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

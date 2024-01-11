@@ -20,6 +20,7 @@ import com.epam.reportportal.formatting.http.entities.BodyType;
 import com.epam.reportportal.formatting.http.prettiers.HtmlPrettier;
 import com.epam.reportportal.formatting.http.prettiers.JsonPrettier;
 import com.epam.reportportal.formatting.http.prettiers.XmlPrettier;
+import com.epam.reportportal.utils.http.ContentType;
 
 import java.util.*;
 import java.util.function.Function;
@@ -48,11 +49,11 @@ public class Constants {
 
 	public static final Set<String> TEXT_TYPES =
 			Collections.unmodifiableSet(new HashSet<>(Arrays.asList(ContentType.APPLICATION_JSON,
-			ContentType.TEXT_PLAIN,
-			ContentType.TEXT_HTML,
-			ContentType.TEXT_XML,
-			ContentType.APPLICATION_XML
-	)));
+					ContentType.TEXT_PLAIN,
+					ContentType.TEXT_HTML,
+					ContentType.TEXT_XML,
+					ContentType.APPLICATION_XML
+			)));
 
 	public static final Set<String> FORM_TYPES = Collections.singleton(ContentType.APPLICATION_FORM_URLENCODED);
 
@@ -64,16 +65,16 @@ public class Constants {
 
 	public static final Map<String, Function<String, String>> DEFAULT_PRETTIERS =
 			Collections.unmodifiableMap(new HashMap<String, Function<String, String>>() {{
-		put(ContentType.APPLICATION_XML, XmlPrettier.INSTANCE);
-		put(ContentType.APPLICATION_SOAP_XML, XmlPrettier.INSTANCE);
-		put(ContentType.APPLICATION_ATOM_XML, XmlPrettier.INSTANCE);
-		put(ContentType.APPLICATION_SVG_XML, XmlPrettier.INSTANCE);
-		put(ContentType.APPLICATION_XHTML_XML, XmlPrettier.INSTANCE);
-		put(ContentType.TEXT_XML, XmlPrettier.INSTANCE);
-		put(ContentType.APPLICATION_JSON, JsonPrettier.INSTANCE);
-		put("text/json", JsonPrettier.INSTANCE);
-		put(ContentType.TEXT_HTML, HtmlPrettier.INSTANCE);
-	}});
+				put(ContentType.APPLICATION_XML, XmlPrettier.INSTANCE);
+				put(ContentType.APPLICATION_SOAP_XML, XmlPrettier.INSTANCE);
+				put(ContentType.APPLICATION_ATOM_XML, XmlPrettier.INSTANCE);
+				put(ContentType.APPLICATION_SVG_XML, XmlPrettier.INSTANCE);
+				put(ContentType.APPLICATION_XHTML_XML, XmlPrettier.INSTANCE);
+				put(ContentType.TEXT_XML, XmlPrettier.INSTANCE);
+				put(ContentType.APPLICATION_JSON, JsonPrettier.INSTANCE);
+				put("text/json", JsonPrettier.INSTANCE);
+				put(ContentType.TEXT_HTML, HtmlPrettier.INSTANCE);
+			}});
 
 	private Constants() {
 		throw new RuntimeException("No instances should exist for the class!");

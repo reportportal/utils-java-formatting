@@ -23,6 +23,7 @@ import com.epam.reportportal.formatting.http.entities.BodyType;
 import com.epam.reportportal.formatting.http.entities.Cookie;
 import com.epam.reportportal.formatting.http.entities.Header;
 import com.epam.reportportal.formatting.http.entities.Param;
+import com.epam.reportportal.utils.http.ContentType;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
@@ -67,7 +68,7 @@ public class HttpFormatUtils {
 
 	@Nonnull
 	public static <T> String format(@Nullable List<T> entities, @Nonnull Function<T, String> converter,
-			@Nullable String tag) {
+	                                @Nullable String tag) {
 		String prefix = tag == null ? "" : tag + LINE_DELIMITER;
 		if (entities == null || entities.isEmpty()) {
 			return "";
@@ -80,7 +81,7 @@ public class HttpFormatUtils {
 
 	@Nonnull
 	public static String formatHeaders(@Nullable List<Header> headers,
-			@Nullable Function<Header, String> headerConverter) {
+	                                   @Nullable Function<Header, String> headerConverter) {
 		return format(headers,
 				headerConverter == null ? DefaultHttpHeaderConverter.INSTANCE : headerConverter,
 				HEADERS_TAG
@@ -89,7 +90,7 @@ public class HttpFormatUtils {
 
 	@Nonnull
 	public static String formatCookies(@Nullable List<Cookie> cookies,
-			@Nullable Function<Cookie, String> cookieConverter) {
+	                                   @Nullable Function<Cookie, String> cookieConverter) {
 		return format(cookies,
 				cookieConverter == null ? DefaultCookieConverter.INSTANCE : cookieConverter,
 				COOKIES_TAG
@@ -98,7 +99,7 @@ public class HttpFormatUtils {
 
 	@Nonnull
 	public static String formatText(@Nullable String header, @Nullable List<Param> params, @Nullable String tag,
-			@Nullable Function<Param, String> paramConverter) {
+	                                @Nullable Function<Param, String> paramConverter) {
 		if (params == null || params.isEmpty()) {
 			return header == null ? "" : header;
 		}
@@ -114,7 +115,7 @@ public class HttpFormatUtils {
 
 	@Nonnull
 	public static String formatText(@Nullable String header, @Nullable String body, @Nullable String tag,
-			@Nullable Map<String, Function<String, String>> contentPrettiers, String contentType) {
+	                                @Nullable Map<String, Function<String, String>> contentPrettiers, String contentType) {
 		Map<String, Function<String, String>> prettiers = contentPrettiers;
 		if (contentPrettiers == null) {
 			prettiers = Collections.emptyMap();
@@ -162,9 +163,9 @@ public class HttpFormatUtils {
 
 	@Nonnull
 	public static Cookie toCookie(@Nonnull String name, @Nullable String value, @Nullable String comment,
-			@Nullable String path, @Nullable String domain, @Nullable Long maxAge, @Nullable Boolean secured,
-			@Nullable Boolean httpOnly, @Nullable Date expiryDate, @Nullable Integer version,
-			@Nullable String sameSite) {
+	                              @Nullable String path, @Nullable String domain, @Nullable Long maxAge, @Nullable Boolean secured,
+	                              @Nullable Boolean httpOnly, @Nullable Date expiryDate, @Nullable Integer version,
+	                              @Nullable String sameSite) {
 		Cookie cookie = new Cookie(name);
 		cookie.setValue(value);
 		cookie.setComment(comment);
