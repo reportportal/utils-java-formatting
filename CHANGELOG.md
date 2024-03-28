@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+
+## [5.2.2]
 ### Changed
 - Client version updated on [5.2.7](https://github.com/reportportal/client-java/releases/tag/5.2.7), by @HardNorth
 - Client and JSR 305 dependencies marked as `compileOnly`, by @HardNorth
