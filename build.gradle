@@ -37,11 +37,13 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.epam.reportportal:client-java:5.2.4'
-    implementation 'com.google.code.findbugs:jsr305:3.0.2'
+    compileOnly "com.epam.reportportal:client-java:${client_version}"
+    compileOnly "com.google.code.findbugs:jsr305:${jsr305_version}"
 
     implementation 'org.jsoup:jsoup:1.15.3'
 
+    testImplementation "com.epam.reportportal:client-java:${client_version}"
+    testImplementation "com.google.code.findbugs:jsr305:${jsr305_version}"
     testImplementation 'com.epam.reportportal:agent-java-test-utils:0.0.2'
 
     testImplementation("org.junit.platform:junit-platform-runner:${junit5_runner_version}") {
