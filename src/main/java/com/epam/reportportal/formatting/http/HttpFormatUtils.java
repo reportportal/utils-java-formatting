@@ -52,7 +52,7 @@ public class HttpFormatUtils {
 	@Nonnull
 	public static String getMimeType(@Nullable String contentType) {
 		return ofNullable(contentType).filter(ct -> !ct.isEmpty())
-				.map(ct -> ContentType.parse(contentType))
+				.map(ct -> ContentType.stripMediaType(contentType))
 				.orElse(ContentType.APPLICATION_OCTET_STREAM);
 	}
 
@@ -278,7 +278,7 @@ public class HttpFormatUtils {
 		if (contentType == null || contentType.isEmpty()) {
 			return BodyType.NONE;
 		}
-		String mimeType = ContentType.parse(contentType);
+		String mimeType = ContentType.stripMediaType(contentType);
 		return ofNullable(typeMap).map(m -> m.getOrDefault(mimeType, BodyType.BINARY)).orElse(BodyType.BINARY);
 	}
 
