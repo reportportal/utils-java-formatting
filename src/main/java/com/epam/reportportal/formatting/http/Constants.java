@@ -52,7 +52,13 @@ public class Constants {
 					ContentType.TEXT_PLAIN,
 					ContentType.TEXT_HTML,
 					ContentType.TEXT_XML,
-					ContentType.APPLICATION_XML
+					ContentType.APPLICATION_XML,
+					ContentType.APPLICATION_SOAP_XML,
+					ContentType.APPLICATION_ATOM_XML,
+					// Can't use ContentType.TEXT_JSON, etc. because client-java dependency marked as compileOnly
+					"text/json",
+					"application/x.reportportal.launch.v2+json",
+					"application/x.reportportal.test.v2+json"
 			)));
 
 	public static final Set<String> FORM_TYPES = Collections.singleton(ContentType.APPLICATION_FORM_URLENCODED);
@@ -72,7 +78,10 @@ public class Constants {
 				put(ContentType.APPLICATION_XHTML_XML, XmlPrettier.INSTANCE);
 				put(ContentType.TEXT_XML, XmlPrettier.INSTANCE);
 				put(ContentType.APPLICATION_JSON, JsonPrettier.INSTANCE);
+				// Can't use ContentType.TEXT_JSON, etc. because client-java dependency marked as compileOnly
 				put("text/json", JsonPrettier.INSTANCE);
+				put("application/x.reportportal.launch.v2+json", JsonPrettier.INSTANCE);
+				put("application/x.reportportal.test.v2+json", JsonPrettier.INSTANCE);
 				put(ContentType.TEXT_HTML, HtmlPrettier.INSTANCE);
 			}});
 
