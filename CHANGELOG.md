@@ -1,6 +1,10 @@
 # Changelog
 
 ## [Unreleased]
+### Added
+- New Json and Text types to `Constants` class, by @HardNorth
+### Changed
+- Client version updated on [5.2.23](https://github.com/reportportal/client-java/releases/tag/5.2.23), by @HardNorth
 
 ## [5.2.3]
 ### Changed
