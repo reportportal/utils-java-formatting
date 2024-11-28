@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+
+## [5.2.4]
 ### Added
 - New Json and Text types to `Constants` class, by @HardNorth
 ### Changed
