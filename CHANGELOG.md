@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+
+## [5.2.6]
 ### Added
 - `AbstractHttpFormatter.setContentPrettifiers` and `AbstractHttpFormatter.getContentPrettifiers` methods, by @HardNorth
 ### Changed
