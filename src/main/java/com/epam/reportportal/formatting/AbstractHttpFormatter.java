@@ -40,6 +40,11 @@ import static com.epam.reportportal.formatting.http.Constants.BODY_TYPE_MAP;
 import static com.epam.reportportal.formatting.http.Constants.DEFAULT_PRETTIERS;
 import static java.util.Optional.ofNullable;
 
+/**
+ * Common class for HTTP formatters.
+ *
+ * @param <SELF> the type of the formatter
+ */
 public abstract class AbstractHttpFormatter<SELF extends AbstractHttpFormatter<SELF>> {
 
 	protected final String logLevel;
@@ -49,8 +54,18 @@ public abstract class AbstractHttpFormatter<SELF extends AbstractHttpFormatter<S
 	protected final Function<Cookie, String> cookieConverter;
 	protected final Function<String, String> uriConverter;
 
-	protected Map<String, Function<String, String>> contentPrettiers = DEFAULT_PRETTIERS;
+	private Map<String, Function<String, String>> contentPrettifiers = DEFAULT_PRETTIERS;
 
+	/**
+	 * @deprecated Use {@link #getContentPrettifiers()} instead
+	 */
+	@Deprecated
+	protected Map<String, Function<String, String>> contentPrettiers = contentPrettifiers;
+
+	/**
+	 * @deprecated Use {@link #getBodyTypeMap()} instead
+	 */
+	@Deprecated
 	protected Map<String, BodyType> bodyTypeMap = BODY_TYPE_MAP;
 
 	/**
@@ -66,10 +81,8 @@ public abstract class AbstractHttpFormatter<SELF extends AbstractHttpFormatter<S
 	 * @param uriConverterFunction      the same as 'headerConvertFunction' param but for URI, default function returns
 	 *                                  URI "as is"
 	 */
-	protected AbstractHttpFormatter(@Nonnull LogLevel defaultLogLevel,
-			@Nullable Function<Header, String> headerConvertFunction,
-			@Nullable Function<Header, String> partHeaderConvertFunction,
-			@Nullable Function<Cookie, String> cookieConvertFunction,
+	protected AbstractHttpFormatter(@Nonnull LogLevel defaultLogLevel, @Nullable Function<Header, String> headerConvertFunction,
+			@Nullable Function<Header, String> partHeaderConvertFunction, @Nullable Function<Cookie, String> cookieConvertFunction,
 			@Nullable Function<String, String> uriConverterFunction) {
 		logLevel = defaultLogLevel.name();
 		headerConverter = headerConvertFunction;
@@ -130,28 +143,88 @@ public abstract class AbstractHttpFormatter<SELF extends AbstractHttpFormatter<S
 				break;
 			case MULTIPART:
 				Optional<StepReporter> sr = ofNullable(Launch.currentLaunch()).map(Launch::getStepReporter);
+				//noinspection ReactiveStreamsUnusedPublisher
 				sr.ifPresent(r -> r.sendStep(ItemStatus.INFO, formatter.formatTitle()));
 				logMultiPartRequest((HttpRequestFormatter) formatter); // No multipart type for responses
 				sr.ifPresent(StepReporter::finishPreviousStep);
 				break;
 			default:
-				ReportPortal.emitLog(
-						"Unknown entity type: " + type.name(),
-						LogLevel.ERROR.name(),
-						Calendar.getInstance().getTime()
-				);
+				ReportPortal.emitLog("Unknown entity type: " + type.name(), LogLevel.ERROR.name(), Calendar.getInstance().getTime());
 		}
 	}
 
+	/**
+	 * Set the body type map for the formatter.
+	 * <p>
+	 * The map should contain the mapping between the content type and the body type (an instance of {@link BodyType} enum). The body type
+	 * is used to determine how to log the body of the request/response.
+	 *
+	 * @param typeMap a map with the content type as a key and the body type as a value
+	 * @return the formatter instance
+	 */
 	@SuppressWarnings("unchecked")
+	@Nonnull
 	public SELF setBodyTypeMap(@Nonnull Map<String, BodyType> typeMap) {
 		this.bodyTypeMap = Collections.unmodifiableMap(new HashMap<>(typeMap));
 		return (SELF) this;
 	}
 
+	/**
+	 * Get the body type map for the formatter.
+	 * <p>
+	 * The map contains the mapping between the content type and the body type (an instance of {@link BodyType} enum). The body type is
+	 * used to determine how to log the body of the request/response.
+	 *
+	 * @return a map with the content type as a key and the body type as a value
+	 */
+	@Nonnull
+	public Map<String, BodyType> getBodyTypeMap() {
+		return bodyTypeMap;
+	}
+
+	/***
+	 * Set the content prettifiers for the formatter.
+	 * <p>
+	 * Content prettifiers are used to format the content of the request/response before logging it. The prettifiers are applied to the
+	 * content based on the content type.
+	 *
+	 * @param contentPrettifiers a map with the content type as a key and the prettifier function as a value
+	 * @return the formatter instance
+	 */
 	@SuppressWarnings("unchecked")
-	public SELF setContentPrettiers(@Nonnull Map<String, Function<String, String>> contentPrettiers) {
-		this.contentPrettiers = Collections.unmodifiableMap(new HashMap<>(contentPrettiers));
+	@Nonnull
+	public SELF setContentPrettifiers(@Nonnull Map<String, Function<String, String>> contentPrettifiers) {
+		this.contentPrettifiers = Collections.unmodifiableMap(new HashMap<>(contentPrettifiers));
+		this.contentPrettiers = this.contentPrettifiers;
 		return (SELF) this;
+	}
+
+	/***
+	 * Set the content prettifiers for the formatter.
+	 * <p>
+	 * Content prettifiers are used to format the content of the request/response before logging it. The prettifiers are applied to the
+	 * content based on the content type.
+	 *
+	 * @param contentPrettifiers a map with the content type as a key and the prettifier function as a value
+	 * @return the formatter instance
+	 * @deprecated Use {@link #setContentPrettifiers(Map)} instead
+	 */
+	@Deprecated
+	@Nonnull
+	public SELF setContentPrettiers(@Nonnull Map<String, Function<String, String>> contentPrettifiers) {
+		return setContentPrettifiers(contentPrettifiers);
+	}
+
+	/**
+	 * Get the content prettifiers for the formatter.
+	 * <p>
+	 * Content prettifiers are used to format the content of the request/response before logging it. The prettifiers are applied to the
+	 * content based on the content type.
+	 *
+	 * @return a map with the content type as a key and the prettifier function as a value
+	 */
+	@Nonnull
+	public Map<String, Function<String, String>> getContentPrettifiers() {
+		return contentPrettifiers;
 	}
 }
