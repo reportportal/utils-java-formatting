@@ -1,6 +1,12 @@
 # Changelog
 
 ## [Unreleased]
+### Added
+- `AbstractHttpFormatter.setContentPrettifiers` and `AbstractHttpFormatter.getContentPrettifiers` methods, by @HardNorth
+### Changed
+- `AbstractHttpFormatter.setContentPrettiers` method deprecated, since it was misspelled, by @HardNorth
+- `AbstractHttpFormatter.contentPrettiers` field deprecated, since it was misspelled, by @HardNorth
+- `AbstractHttpFormatter.bodyTypeMap` field deprecated in favor of `AbstractHttpFormatter.getBodyTypeMap` method, by @HardNorth
 
 ## [5.2.5]
 ### Changed
