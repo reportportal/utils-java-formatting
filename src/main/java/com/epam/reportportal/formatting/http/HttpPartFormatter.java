@@ -43,7 +43,7 @@ public class HttpPartFormatter {
 	private String fileName;
 
 	private Function<Header, String> headerConverter;
-	private Map<String, Function<String, String>> prettiers;
+	private Map<String, Function<String, String>> prettifiers;
 
 	public HttpPartFormatter(@Nonnull PartType type, @Nonnull String mimeType, @Nonnull Object payload) {
 		this.type = type;
@@ -71,7 +71,7 @@ public class HttpPartFormatter {
 	}
 
 	public String formatAsText() {
-		return HttpFormatUtils.formatText(formatHeaders(), getTextPayload(), BODY_PART_TAG, prettiers, mimeType);
+		return HttpFormatUtils.formatText(formatHeaders(), getTextPayload(), BODY_PART_TAG, prettifiers, mimeType);
 	}
 
 	public String formatForBinaryDataPrefix() {
@@ -128,8 +128,17 @@ public class HttpPartFormatter {
 		this.headerConverter = headerConverter;
 	}
 
-	public void setPrettiers(Map<String, Function<String, String>> prettiers) {
-		this.prettiers = prettiers;
+	public void setPrettifiers(Map<String, Function<String, String>> prettifiers) {
+		this.prettifiers = prettifiers;
+	}
+
+	/**
+	 * @param prettifiers a map with the content type as a key and the prettifier function as a value
+	 * @deprecated Use {@link #setPrettifiers(Map)} instead
+	 */
+	@Deprecated
+	public void setPrettiers(Map<String, Function<String, String>> prettifiers) {
+		setPrettifiers(prettifiers);
 	}
 
 	public enum PartType {
@@ -148,7 +157,7 @@ public class HttpPartFormatter {
 		private String fileName;
 
 		private Function<Header, String> headerConverter;
-		private Map<String, Function<String, String>> prettiers;
+		private Map<String, Function<String, String>> prettifiers;
 
 		/***
 		 *
@@ -198,9 +207,19 @@ public class HttpPartFormatter {
 			return this;
 		}
 
-		public Builder prettiers(Map<String, Function<String, String>> formatPrettiers) {
-			this.prettiers = formatPrettiers;
+		public Builder prettifiers(Map<String, Function<String, String>> formatPrettifiers) {
+			this.prettifiers = formatPrettifiers;
 			return this;
+		}
+
+		/**
+		 * @param formatPrettifiers a map with the content type as a key and the prettifier function as a value
+		 * @return the builder instance
+		 * @deprecated Use {@link #prettifiers(Map)} instead
+		 */
+		@Deprecated
+		public Builder prettiers(Map<String, Function<String, String>> formatPrettifiers) {
+			return prettifiers(formatPrettifiers);
 		}
 
 		public HttpPartFormatter build() {
@@ -210,7 +229,7 @@ public class HttpPartFormatter {
 			formatter.setCharset(charset);
 			formatter.setFileName(fileName);
 			formatter.setHeaderConverter(ofNullable(headerConverter).orElse(DefaultHttpHeaderConverter.INSTANCE));
-			formatter.setPrettiers(ofNullable(prettiers).orElse(Constants.DEFAULT_PRETTIERS));
+			formatter.setPrettifiers(ofNullable(prettifiers).orElse(Constants.DEFAULT_PRETTIFIERS));
 			return formatter;
 		}
 	}

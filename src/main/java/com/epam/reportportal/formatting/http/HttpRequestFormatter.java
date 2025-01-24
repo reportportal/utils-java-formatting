@@ -43,7 +43,7 @@ public class HttpRequestFormatter implements HttpFormatter {
 	private Function<Header, String> headerConverter;
 	private Function<Cookie, String> cookieConverter;
 	private Function<Param, String> paramConverter;
-	private Map<String, Function<String, String>> prettiers;
+	private Map<String, Function<String, String>> prettifiers;
 
 	private List<Header> headers;
 	private List<Cookie> cookies;
@@ -86,7 +86,7 @@ public class HttpRequestFormatter implements HttpFormatter {
 		if (BodyType.FORM == type) {
 			return HttpFormatUtils.formatText(formatHead(), getFormBody(), BODY_FORM_TAG, paramConverter);
 		}
-		return HttpFormatUtils.formatText(formatHead(), getTextBody(), BODY_TAG, prettiers, mimeType);
+		return HttpFormatUtils.formatText(formatHead(), getTextBody(), BODY_TAG, prettifiers, mimeType);
 	}
 
 	public void setUriConverter(@Nonnull Function<String, String> uriConverter) {
@@ -175,8 +175,17 @@ public class HttpRequestFormatter implements HttpFormatter {
 		throw new ClassCastException("Cannot return multipart body for body type: " + type.name());
 	}
 
-	public void setPrettiers(Map<String, Function<String, String>> prettiers) {
-		this.prettiers = prettiers;
+	public void setPrettifiers(Map<String, Function<String, String>> prettifiers) {
+		this.prettifiers = prettifiers;
+	}
+
+	/**
+	 * @param prettifiers a map with the content type as a key and the prettifier function as a value
+	 * @deprecated Use {@link #setPrettifiers(Map)} instead
+	 */
+	@Deprecated
+	public void setPrettiers(Map<String, Function<String, String>> prettifiers) {
+		setPrettifiers(prettifiers);
 	}
 
 	public static class Builder {
@@ -195,7 +204,7 @@ public class HttpRequestFormatter implements HttpFormatter {
 
 		private Object body;
 
-		private Map<String, Function<String, String>> prettiers;
+		private Map<String, Function<String, String>> prettifiers;
 
 		public Builder(@Nonnull String requestMethod, @Nonnull String requestUri) {
 			method = requestMethod;
@@ -232,9 +241,10 @@ public class HttpRequestFormatter implements HttpFormatter {
 			return this;
 		}
 
-		public Builder addCookie(String name, String value, String comment, String path, String domain, Long maxAge,
-		                         Boolean secured, Boolean httpOnly, Date expiryDate, Integer version, String sameSite) {
-			return addCookie(HttpFormatUtils.toCookie(name,
+		public Builder addCookie(String name, String value, String comment, String path, String domain, Long maxAge, Boolean secured,
+				Boolean httpOnly, Date expiryDate, Integer version, String sameSite) {
+			return addCookie(HttpFormatUtils.toCookie(
+					name,
 					value,
 					comment,
 					path,
@@ -302,9 +312,19 @@ public class HttpRequestFormatter implements HttpFormatter {
 			return this;
 		}
 
-		public Builder prettiers(Map<String, Function<String, String>> formatPrettiers) {
-			this.prettiers = formatPrettiers;
+		public Builder prettifiers(Map<String, Function<String, String>> formatPrettifiers) {
+			this.prettifiers = formatPrettifiers;
 			return this;
+		}
+
+		/**
+		 * @param formatPrettifiers a map with the content type as a key and the prettifier function as a value
+		 * @return the builder instance
+		 * @deprecated Use {@link #prettifiers(Map)} instead
+		 */
+		@Deprecated
+		public Builder prettiers(Map<String, Function<String, String>> formatPrettifiers) {
+			return prettifiers(formatPrettifiers);
 		}
 
 		public HttpRequestFormatter build() {
@@ -313,7 +333,7 @@ public class HttpRequestFormatter implements HttpFormatter {
 			result.setHeaderConverter(ofNullable(headerConverter).orElse(DefaultHttpHeaderConverter.INSTANCE));
 			result.setCookieConverter(ofNullable(cookieConverter).orElse(DefaultCookieConverter.INSTANCE));
 			result.setParamConverter(ofNullable(paramConverter).orElse(DefaultFormParamConverter.INSTANCE));
-			result.setPrettiers(ofNullable(prettiers).orElse(Constants.DEFAULT_PRETTIERS));
+			result.setPrettifiers(ofNullable(prettifiers).orElse(DEFAULT_PRETTIFIERS));
 			result.setHeaders(headers);
 			result.setCookies(cookies);
 			if (body != null) {

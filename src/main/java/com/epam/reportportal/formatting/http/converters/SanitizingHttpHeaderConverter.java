@@ -28,8 +28,7 @@ import static com.epam.reportportal.formatting.http.Constants.REMOVED_TAG;
 import static java.util.Optional.ofNullable;
 
 public class SanitizingHttpHeaderConverter implements Function<Header, String> {
-	public static final Set<String> SENSITIVE_HEADERS = Collections.unmodifiableSet(new HashSet<>(Collections.singletonList(
-			"Authorization")));
+	public static final Set<String> SENSITIVE_HEADERS = Collections.unmodifiableSet(new HashSet<>(Collections.singletonList("Authorization")));
 
 	public static final Function<Header, String> INSTANCE = new SanitizingHttpHeaderConverter();
 
@@ -45,12 +44,10 @@ public class SanitizingHttpHeaderConverter implements Function<Header, String> {
 
 	@Override
 	public @Nullable String apply(@Nullable Header header) {
-		return DefaultHttpHeaderConverter.INSTANCE.apply(ofNullable(header).filter(h -> sanitizeSet.contains(h.getName()))
-				.map(h -> {
-					Header newHeader = h.clone();
-					newHeader.setValue(REMOVED_TAG);
-					return newHeader;
-				})
-				.orElse(header));
+		return DefaultHttpHeaderConverter.INSTANCE.apply(ofNullable(header).filter(h -> sanitizeSet.contains(h.getName())).map(h -> {
+			Header newHeader = h.clone();
+			newHeader.setValue(REMOVED_TAG);
+			return newHeader;
+		}).orElse(header));
 	}
 }

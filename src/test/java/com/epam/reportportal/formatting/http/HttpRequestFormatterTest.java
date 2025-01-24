@@ -35,7 +35,8 @@ public class HttpRequestFormatterTest {
 	public static final String TEST_TEXT = "this is a test";
 
 	public static Iterable<Object[]> textBodies() {
-		return Arrays.asList(new Object[] { ContentType.APPLICATION_JSON, "{\"object\": {\"key\": \"value\"}}",
+		return Arrays.asList(
+				new Object[] { ContentType.APPLICATION_JSON, "{\"object\": {\"key\": \"value\"}}",
 						"{\n" + "  \"object\" : {\n" + "    \"key\" : \"value\"\n" + "  }\n" + "}" },
 				new Object[] { ContentType.APPLICATION_XML, "<test><key><value>value</value></key></test>",
 						"<test>\n" + "  <key>\n" + "    <value>value</value>\n" + "  </key>\n" + "</test>" },
@@ -50,15 +51,15 @@ public class HttpRequestFormatterTest {
 	}
 
 	private static String getTextBody(ContentType contentType, String bodyTag, String payload) {
-		return getRequestString() + HEADERS_TAG + LINE_DELIMITER + HttpHeaders.CONTENT_TYPE + ": " + contentType
-				+ LINE_DELIMITER + LINE_DELIMITER + bodyTag + LINE_DELIMITER + BODY_HIGHLIGHT + LINE_DELIMITER + payload
-				+ LINE_DELIMITER + BODY_HIGHLIGHT;
+		return getRequestString() + HEADERS_TAG + LINE_DELIMITER + HttpHeaders.CONTENT_TYPE + ": " + contentType + LINE_DELIMITER
+				+ LINE_DELIMITER + bodyTag + LINE_DELIMITER + BODY_HIGHLIGHT + LINE_DELIMITER + payload + LINE_DELIMITER + BODY_HIGHLIGHT;
 	}
 
 	@ParameterizedTest
 	@MethodSource("textBodies")
 	public void verify_request_text_body_format(ContentType contentType, String body, String expected) {
-		HttpRequestFormatter formatter = new HttpRequestFormatter.Builder(REQUEST_METHOD, REQUEST_URL).addHeader(HttpHeaders.CONTENT_TYPE,
+		HttpRequestFormatter formatter = new HttpRequestFormatter.Builder(REQUEST_METHOD, REQUEST_URL).addHeader(
+				HttpHeaders.CONTENT_TYPE,
 				contentType.toString()
 		).bodyText(contentType.getMimeType(), body).build();
 		assertThat(formatter.formatAsText(), equalTo(getTextBody(contentType, BODY_TAG, expected)));
@@ -69,7 +70,8 @@ public class HttpRequestFormatterTest {
 		String body = "test1=test1&test2=wefwfqwef%20df%20qwef%20%23%24%25&test3=&F%23%24%25DFFG=dclk%20345%25%2056%20";
 		String expectedBody = "test1: test1\ntest2: wefwfqwef df qwef #$%\ntest3: \nF#$%DFFG: dclk 345% 56 ";
 		ContentType contentType = ContentType.APPLICATION_FORM_URLENCODED;
-		HttpRequestFormatter formatter = new HttpRequestFormatter.Builder(REQUEST_METHOD, REQUEST_URL).addHeader(HttpHeaders.CONTENT_TYPE,
+		HttpRequestFormatter formatter = new HttpRequestFormatter.Builder(REQUEST_METHOD, REQUEST_URL).addHeader(
+				HttpHeaders.CONTENT_TYPE,
 				contentType.toString()
 		).bodyParams(body).build();
 		assertThat(formatter.formatAsText(), equalTo(getTextBody(contentType, BODY_FORM_TAG, expectedBody)));
@@ -77,14 +79,14 @@ public class HttpRequestFormatterTest {
 
 	@Test
 	public void verify_request_no_header_format() {
-		HttpRequestFormatter formatter = new HttpRequestFormatter.Builder(REQUEST_METHOD, REQUEST_URL).bodyText(
-				ContentType.TEXT_PLAIN.getMimeType(),
-				TEST_TEXT
-		).build();
+		HttpRequestFormatter formatter = new HttpRequestFormatter.Builder(
+				REQUEST_METHOD,
+				REQUEST_URL
+		).bodyText(ContentType.TEXT_PLAIN.getMimeType(), TEST_TEXT).build();
 		assertThat(
 				formatter.formatAsText(),
-				equalTo(getRequestString() + BODY_TAG + LINE_DELIMITER + BODY_HIGHLIGHT + LINE_DELIMITER + TEST_TEXT
-						+ LINE_DELIMITER + BODY_HIGHLIGHT)
+				equalTo(getRequestString() + BODY_TAG + LINE_DELIMITER + BODY_HIGHLIGHT + LINE_DELIMITER + TEST_TEXT + LINE_DELIMITER
+						+ BODY_HIGHLIGHT)
 		);
 	}
 }

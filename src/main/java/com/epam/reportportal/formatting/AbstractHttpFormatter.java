@@ -37,7 +37,7 @@ import java.util.*;
 import java.util.function.Function;
 
 import static com.epam.reportportal.formatting.http.Constants.BODY_TYPE_MAP;
-import static com.epam.reportportal.formatting.http.Constants.DEFAULT_PRETTIERS;
+import static com.epam.reportportal.formatting.http.Constants.DEFAULT_PRETTIFIERS;
 import static java.util.Optional.ofNullable;
 
 /**
@@ -54,7 +54,7 @@ public abstract class AbstractHttpFormatter<SELF extends AbstractHttpFormatter<S
 	protected final Function<Cookie, String> cookieConverter;
 	protected final Function<String, String> uriConverter;
 
-	private Map<String, Function<String, String>> contentPrettifiers = DEFAULT_PRETTIERS;
+	private Map<String, Function<String, String>> contentPrettifiers = DEFAULT_PRETTIFIERS;
 
 	/**
 	 * @deprecated Use {@link #getContentPrettifiers()} instead

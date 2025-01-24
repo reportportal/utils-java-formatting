@@ -14,23 +14,32 @@
  * limitations under the License.
  */
 
-package com.epam.reportportal.formatting.http.prettiers;
+package com.epam.reportportal.formatting.http.prettifiers;
 
-import com.epam.reportportal.formatting.http.prettifiers.HtmlPrettifier;
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
-/**
- * @deprecated Use {@link HtmlPrettifier} instead.
- */
-@Deprecated
-public class HtmlPrettier extends HtmlPrettifier {
+public class HtmlPrettifier implements Prettifier {
 	private static final Document.OutputSettings OUTPUT_SETTINGS = new Document.OutputSettings().indentAmount(2);
 
-	public HtmlPrettier(Document.OutputSettings outputSettings) {
-		super(outputSettings);
+	public static final HtmlPrettifier INSTANCE = new HtmlPrettifier();
+
+	private final Document.OutputSettings settings;
+
+	public HtmlPrettifier(Document.OutputSettings outputSettings) {
+		settings = outputSettings;
 	}
 
-	private HtmlPrettier() {
+	private HtmlPrettifier() {
 		this(OUTPUT_SETTINGS);
+	}
+
+	@Override
+	public String apply(String html) {
+		try {
+			return Jsoup.parse(html).outputSettings(settings).html().trim();
+		} catch (Exception ignore) {
+			return html;
+		}
 	}
 }

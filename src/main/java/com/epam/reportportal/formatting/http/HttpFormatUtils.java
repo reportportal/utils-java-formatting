@@ -61,14 +61,11 @@ public class HttpFormatUtils {
 		if (parts == null) {
 			return "";
 		}
-		return Arrays.stream(parts)
-				.filter(p -> Objects.nonNull(p) && !p.isEmpty())
-				.collect(Collectors.joining(delimiter));
+		return Arrays.stream(parts).filter(p -> Objects.nonNull(p) && !p.isEmpty()).collect(Collectors.joining(delimiter));
 	}
 
 	@Nonnull
-	public static <T> String format(@Nullable List<T> entities, @Nonnull Function<T, String> converter,
-	                                @Nullable String tag) {
+	public static <T> String format(@Nullable List<T> entities, @Nonnull Function<T, String> converter, @Nullable String tag) {
 		String prefix = tag == null ? "" : tag + LINE_DELIMITER;
 		if (entities == null || entities.isEmpty()) {
 			return "";
@@ -80,34 +77,23 @@ public class HttpFormatUtils {
 	}
 
 	@Nonnull
-	public static String formatHeaders(@Nullable List<Header> headers,
-	                                   @Nullable Function<Header, String> headerConverter) {
-		return format(headers,
-				headerConverter == null ? DefaultHttpHeaderConverter.INSTANCE : headerConverter,
-				HEADERS_TAG
-		);
+	public static String formatHeaders(@Nullable List<Header> headers, @Nullable Function<Header, String> headerConverter) {
+		return format(headers, headerConverter == null ? DefaultHttpHeaderConverter.INSTANCE : headerConverter, HEADERS_TAG);
 	}
 
 	@Nonnull
-	public static String formatCookies(@Nullable List<Cookie> cookies,
-	                                   @Nullable Function<Cookie, String> cookieConverter) {
-		return format(cookies,
-				cookieConverter == null ? DefaultCookieConverter.INSTANCE : cookieConverter,
-				COOKIES_TAG
-		);
+	public static String formatCookies(@Nullable List<Cookie> cookies, @Nullable Function<Cookie, String> cookieConverter) {
+		return format(cookies, cookieConverter == null ? DefaultCookieConverter.INSTANCE : cookieConverter, COOKIES_TAG);
 	}
 
 	@Nonnull
 	public static String formatText(@Nullable String header, @Nullable List<Param> params, @Nullable String tag,
-	                                @Nullable Function<Param, String> paramConverter) {
+			@Nullable Function<Param, String> paramConverter) {
 		if (params == null || params.isEmpty()) {
 			return header == null ? "" : header;
 		}
 		String prefix = tag == null ? "" : tag + LINE_DELIMITER;
-		String body = format(params,
-				paramConverter == null ? DefaultFormParamConverter.INSTANCE : paramConverter,
-				null
-		);
+		String body = format(params, paramConverter == null ? DefaultFormParamConverter.INSTANCE : paramConverter, null);
 		return (header == null || header.isEmpty() ? "" : header + LINE_DELIMITER + LINE_DELIMITER) + (body.isEmpty() ?
 				body :
 				prefix + BODY_HIGHLIGHT + LINE_DELIMITER + body + LINE_DELIMITER + BODY_HIGHLIGHT);
@@ -115,18 +101,18 @@ public class HttpFormatUtils {
 
 	@Nonnull
 	public static String formatText(@Nullable String header, @Nullable String body, @Nullable String tag,
-	                                @Nullable Map<String, Function<String, String>> contentPrettiers, String contentType) {
-		Map<String, Function<String, String>> prettiers = contentPrettiers;
-		if (contentPrettiers == null) {
-			prettiers = Collections.emptyMap();
+			@Nullable Map<String, Function<String, String>> contentPrettifiers, String contentType) {
+		Map<String, Function<String, String>> prettifiers = contentPrettifiers;
+		if (contentPrettifiers == null) {
+			prettifiers = Collections.emptyMap();
 		}
 		if (body == null || body.isEmpty()) {
 			return header == null ? "" : header;
 		}
 		return (header == null || header.isEmpty() ? "" : header + LINE_DELIMITER + LINE_DELIMITER) + (tag == null || tag.isEmpty() ?
 				"" :
-				tag + LINE_DELIMITER) + BODY_HIGHLIGHT + LINE_DELIMITER + (prettiers.containsKey(contentType) ?
-				prettiers.get(contentType).apply(body) :
+				tag + LINE_DELIMITER) + BODY_HIGHLIGHT + LINE_DELIMITER + (prettifiers.containsKey(contentType) ?
+				prettifiers.get(contentType).apply(body) :
 				body) + LINE_DELIMITER + BODY_HIGHLIGHT;
 	}
 
@@ -162,10 +148,9 @@ public class HttpFormatUtils {
 	}
 
 	@Nonnull
-	public static Cookie toCookie(@Nonnull String name, @Nullable String value, @Nullable String comment,
-	                              @Nullable String path, @Nullable String domain, @Nullable Long maxAge, @Nullable Boolean secured,
-	                              @Nullable Boolean httpOnly, @Nullable Date expiryDate, @Nullable Integer version,
-	                              @Nullable String sameSite) {
+	public static Cookie toCookie(@Nonnull String name, @Nullable String value, @Nullable String comment, @Nullable String path,
+			@Nullable String domain, @Nullable Long maxAge, @Nullable Boolean secured, @Nullable Boolean httpOnly,
+			@Nullable Date expiryDate, @Nullable Integer version, @Nullable String sameSite) {
 		Cookie cookie = new Cookie(name);
 		cookie.setValue(value);
 		cookie.setComment(comment);
@@ -197,9 +182,7 @@ public class HttpFormatUtils {
 		//           Wed, 06-Sep-2023 11:22:09 GMT
 		Date expiryDate = ofNullable(cookieMetadata.get("expires")).map(d -> {
 			try {
-				return new SimpleDateFormat(DefaultCookieConverter.DEFAULT_COOKIE_DATE_FORMAT).parse(d.replace('-',
-						' '
-				));
+				return new SimpleDateFormat(DefaultCookieConverter.DEFAULT_COOKIE_DATE_FORMAT).parse(d.replace('-', ' '));
 			} catch (ParseException e) {
 				return null;
 			}
@@ -207,7 +190,8 @@ public class HttpFormatUtils {
 		Integer version = cookieMetadata.get("version") == null ? null : Integer.valueOf(cookieMetadata.get("version"));
 		String sameSite = cookieMetadata.get("samesite");
 
-		return toCookie(nameValue.getKey(),
+		return toCookie(
+				nameValue.getKey(),
 				nameValue.getValue(),
 				comment,
 				path,
@@ -231,8 +215,10 @@ public class HttpFormatUtils {
 
 	@Nonnull
 	private static Charset getCharset(@Nullable String contentType) {
-		return ofNullable(contentType).flatMap(h -> toKeyValue(h).filter(p -> "charset".equalsIgnoreCase(p.getKey()))
-				.findAny()).map(Pair::getValue).map(Charset::forName).orElse(StandardCharsets.UTF_8);
+		return ofNullable(contentType).flatMap(h -> toKeyValue(h).filter(p -> "charset".equalsIgnoreCase(p.getKey())).findAny())
+				.map(Pair::getValue)
+				.map(Charset::forName)
+				.orElse(StandardCharsets.UTF_8);
 	}
 
 	@Nonnull

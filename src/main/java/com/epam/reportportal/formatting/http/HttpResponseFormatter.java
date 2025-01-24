@@ -41,7 +41,7 @@ public class HttpResponseFormatter implements HttpFormatter {
 
 	private Function<Header, String> headerConverter;
 	private Function<Cookie, String> cookieConverter;
-	private Map<String, Function<String, String>> prettiers;
+	private Map<String, Function<String, String>> prettifiers;
 
 	private List<Header> headers;
 	private List<Cookie> cookies;
@@ -106,7 +106,7 @@ public class HttpResponseFormatter implements HttpFormatter {
 	@Override
 	@Nonnull
 	public String formatAsText() {
-		return HttpFormatUtils.formatText(formatHead(), getTextBody(), BODY_TAG, prettiers, mimeType);
+		return HttpFormatUtils.formatText(formatHead(), getTextBody(), BODY_TAG, prettifiers, mimeType);
 	}
 
 	public void setHeaderConverter(Function<Header, String> headerConverter) {
@@ -142,8 +142,17 @@ public class HttpResponseFormatter implements HttpFormatter {
 		throw new ClassCastException("Cannot return binary body for body type: " + type.name());
 	}
 
-	public void setPrettiers(Map<String, Function<String, String>> prettiers) {
-		this.prettiers = prettiers;
+	public void setPrettifiers(Map<String, Function<String, String>> prettifiers) {
+		this.prettifiers = prettifiers;
+	}
+
+	/**
+	 * @param prettifiers a map with the content type as a key and the prettifier function as a value
+	 * @deprecated Use {@link #setPrettifiers(Map)} instead
+	 */
+	@Deprecated
+	public void setPrettiers(Map<String, Function<String, String>> prettifiers) {
+		setPrettifiers(prettifiers);
 	}
 
 	public static class Builder {
@@ -161,7 +170,7 @@ public class HttpResponseFormatter implements HttpFormatter {
 
 		private Object body;
 
-		private Map<String, Function<String, String>> prettiers;
+		private Map<String, Function<String, String>> prettifiers;
 
 		public Builder(int statusCode, String reasonPhrase) {
 			this.code = statusCode;
@@ -188,9 +197,10 @@ public class HttpResponseFormatter implements HttpFormatter {
 			return this;
 		}
 
-		public Builder addCookie(String name, String value, String comment, String path, String domain, Long maxAge,
-		                         Boolean secured, Boolean httpOnly, Date expiryDate, Integer version, String sameSite) {
-			return addCookie(HttpFormatUtils.toCookie(name,
+		public Builder addCookie(String name, String value, String comment, String path, String domain, Long maxAge, Boolean secured,
+				Boolean httpOnly, Date expiryDate, Integer version, String sameSite) {
+			return addCookie(HttpFormatUtils.toCookie(
+					name,
 					value,
 					comment,
 					path,
@@ -226,16 +236,26 @@ public class HttpResponseFormatter implements HttpFormatter {
 			return this;
 		}
 
-		public Builder prettiers(Map<String, Function<String, String>> formatPrettiers) {
-			this.prettiers = formatPrettiers;
+		public Builder prettifiers(Map<String, Function<String, String>> formatPrettifiers) {
+			this.prettifiers = formatPrettifiers;
 			return this;
+		}
+
+		/**
+		 * @param formatPrettifiers a map with the content type as a key and the prettifier function as a value
+		 * @return the builder instance
+		 * @deprecated Use {@link #prettifiers(Map)} instead
+		 */
+		@Deprecated
+		public Builder prettiers(Map<String, Function<String, String>> formatPrettifiers) {
+			return prettifiers(formatPrettifiers);
 		}
 
 		public HttpResponseFormatter build() {
 			HttpResponseFormatter result = new HttpResponseFormatter(code, phrase);
 			result.setHeaderConverter(ofNullable(headerConverter).orElse(DefaultHttpHeaderConverter.INSTANCE));
 			result.setCookieConverter(ofNullable(cookieConverter).orElse(DefaultCookieConverter.INSTANCE));
-			result.setPrettiers(ofNullable(prettiers).orElse(Constants.DEFAULT_PRETTIERS));
+			result.setPrettifiers(ofNullable(prettifiers).orElse(DEFAULT_PRETTIFIERS));
 			result.setHeaders(headers);
 			result.setCookies(cookies);
 			if (body != null) {

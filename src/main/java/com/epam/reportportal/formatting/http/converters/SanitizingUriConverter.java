@@ -29,16 +29,12 @@ public class SanitizingUriConverter implements Function<String, String> {
 	public String apply(String uriStr) {
 		try {
 			URI uri = URI.create(uriStr);
-			String userInfo = ofNullable(uri.getUserInfo()).filter(info -> !info.isEmpty())
-					.map(info -> info.split(":", 2))
-					.map(info -> {
-						if (info.length > 1) {
-							return new String[]{info[0], REMOVED_TAG};
-						}
-						return info;
-					})
-					.map(info -> String.join(":", info))
-					.orElse(null);
+			String userInfo = ofNullable(uri.getUserInfo()).filter(info -> !info.isEmpty()).map(info -> info.split(":", 2)).map(info -> {
+				if (info.length > 1) {
+					return new String[] { info[0], REMOVED_TAG };
+				}
+				return info;
+			}).map(info -> String.join(":", info)).orElse(null);
 			return new URI(
 					uri.getScheme(),
 					userInfo,
