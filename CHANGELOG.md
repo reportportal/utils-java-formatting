@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+
+## [5.2.7]
 ### Changed
 - More `Prettiers` to `Prettifiers` renaming and deprecation of `Prettiers`, by @HardNorth
 
