@@ -14,23 +14,33 @@
  * limitations under the License.
  */
 
-package com.epam.reportportal.formatting.http.prettiers;
+package com.epam.reportportal.formatting.http.prettifiers;
 
-import com.epam.reportportal.formatting.http.prettifiers.JsonPrettifier;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-/**
- * @deprecated Use {@link JsonPrettifier} instead.
- */
-@Deprecated
-public class JsonPrettier extends JsonPrettifier {
+public class JsonPrettifier implements Prettifier {
 	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
-	public JsonPrettier(ObjectMapper objectMapper) {
-		super(objectMapper);
+	public static final JsonPrettifier INSTANCE = new JsonPrettifier();
+
+	private final ObjectMapper mapper;
+
+	public JsonPrettifier(ObjectMapper objectMapper) {
+		mapper = objectMapper;
 	}
 
-	private JsonPrettier() {
+	private JsonPrettifier() {
 		this(OBJECT_MAPPER);
+	}
+
+	@Override
+	public String apply(String json) {
+		try {
+			JsonNode node = mapper.readTree(json);
+			return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(node).trim();
+		} catch (Exception ignore) {
+			return json;
+		}
 	}
 }

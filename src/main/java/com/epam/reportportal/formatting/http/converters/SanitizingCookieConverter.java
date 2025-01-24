@@ -29,7 +29,8 @@ import static java.util.Optional.ofNullable;
 
 public class SanitizingCookieConverter implements Function<Cookie, String> {
 
-	public static final Set<String> SESSION_COOKIES = Collections.unmodifiableSet(new HashSet<>(Arrays.asList("sid",
+	public static final Set<String> SESSION_COOKIES = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
+			"sid",
 			"session",
 			"session_id",
 			"sessionId",

@@ -19,10 +19,10 @@ package com.epam.reportportal.formatting.http.converters;
 import com.epam.reportportal.formatting.http.Constants;
 import com.epam.reportportal.formatting.http.entities.Cookie;
 import com.epam.reportportal.formatting.http.entities.Header;
-import com.epam.reportportal.formatting.http.prettiers.HtmlPrettier;
-import com.epam.reportportal.formatting.http.prettiers.JsonPrettier;
-import com.epam.reportportal.formatting.http.prettiers.Prettier;
-import com.epam.reportportal.formatting.http.prettiers.XmlPrettier;
+import com.epam.reportportal.formatting.http.prettifiers.HtmlPrettifier;
+import com.epam.reportportal.formatting.http.prettifiers.JsonPrettifier;
+import com.epam.reportportal.formatting.http.prettifiers.Prettifier;
+import com.epam.reportportal.formatting.http.prettifiers.XmlPrettifier;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -46,8 +46,8 @@ public class ConvertersTest {
 		cookie2.setPath("/");
 
 		return Arrays.asList(
-				new Object[] { cookie1, "session_id: " + Constants.REMOVED_TAG
-						+ "; Comment=test comment; Path=/; Domain=example.com; HttpOnly=true" },
+				new Object[] { cookie1,
+						"session_id: " + Constants.REMOVED_TAG + "; Comment=test comment; Path=/; Domain=example.com; HttpOnly=true" },
 				new Object[] { null, null },
 				new Object[] { cookie2, "test_cookie: my_test_session_id; Path=/" }
 		);
@@ -61,8 +61,7 @@ public class ConvertersTest {
 
 	public static Iterable<Object[]> headerCases() {
 		return Arrays.asList(
-				new Object[] { new Header("Authorization", "Bearer test_token"),
-						"Authorization: " + Constants.REMOVED_TAG },
+				new Object[] { new Header("Authorization", "Bearer test_token"), "Authorization: " + Constants.REMOVED_TAG },
 				new Object[] { null, null },
 				new Object[] { new Header("Accept", "*/*"), "Accept: \\*/\\*" }
 		);
@@ -92,28 +91,27 @@ public class ConvertersTest {
 
 	public static Iterable<Object[]> prettierData() {
 		return Arrays.asList(
-				new Object[] { JsonPrettier.INSTANCE, "{\"object\": {\"key\": \"value\"}}",
+				new Object[] { JsonPrettifier.INSTANCE, "{\"object\": {\"key\": \"value\"}}",
 						"{\n  \"object\" : {\n    \"key\" : \"value\"\n  }\n}" },
-				new Object[] { XmlPrettier.INSTANCE, "<test><key><value>value</value></key></test>",
+				new Object[] { XmlPrettifier.INSTANCE, "<test><key><value>value</value></key></test>",
 						"<test>\n  <key>\n    <value>value</value>\n  </key>\n</test>" },
-				new Object[] { HtmlPrettier.INSTANCE, "<html><body><h1>hello world</h1></body></html>",
+				new Object[] { HtmlPrettifier.INSTANCE, "<html><body><h1>hello world</h1></body></html>",
 						"<html>\n  <head></head>\n  <body>\n    <h1>hello world</h1>\n  </body>\n</html>" },
-				new Object[] { JsonPrettier.INSTANCE, "^$V\\B#$^", "^$V\\B#$^" },
-				new Object[] { XmlPrettier.INSTANCE, "^$V\\B#$^", "^$V\\B#$^" },
-				new Object[] { HtmlPrettier.INSTANCE, "^$V\\B#$\"^",
+				new Object[] { JsonPrettifier.INSTANCE, "^$V\\B#$^", "^$V\\B#$^" },
+				new Object[] { XmlPrettifier.INSTANCE, "^$V\\B#$^", "^$V\\B#$^" },
+				new Object[] { HtmlPrettifier.INSTANCE, "^$V\\B#$\"^",
 						"<html>\n  <head></head>\n  <body>\n    ^$V\\B#$\"^\n  </body>\n</html>" },
-				new Object[] { HtmlPrettier.INSTANCE, "</",
-						"<html>\n  <head></head>\n  <body>\n    &lt;/\n  </body>\n</html>" },
-				new Object[] { HtmlPrettier.INSTANCE, "", "<html>\n  <head></head>\n  <body></body>\n</html>" },
-				new Object[] { JsonPrettier.INSTANCE, null, null },
-				new Object[] { XmlPrettier.INSTANCE, null, null },
-				new Object[] { HtmlPrettier.INSTANCE, null, null }
+				new Object[] { HtmlPrettifier.INSTANCE, "</", "<html>\n  <head></head>\n  <body>\n    &lt;/\n  </body>\n</html>" },
+				new Object[] { HtmlPrettifier.INSTANCE, "", "<html>\n  <head></head>\n  <body></body>\n</html>" },
+				new Object[] { JsonPrettifier.INSTANCE, null, null },
+				new Object[] { HtmlPrettifier.INSTANCE, null, null },
+				new Object[] { HtmlPrettifier.INSTANCE, null, null }
 		);
 	}
 
 	@ParameterizedTest
 	@MethodSource("prettierData")
-	public void test_prettiers(Prettier prettier, String input, String expected) {
+	public void test_prettifier(Prettifier prettier, String input, String expected) {
 		assertThat(prettier.apply(input), equalTo(expected));
 	}
 }

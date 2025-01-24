@@ -72,21 +72,15 @@ public class DefaultCookieConverter implements Function<Cookie, String> {
 			ofNullable(c.getComment()).ifPresent(comment -> cookieValues.add(COMMENT + ATTRIBUTE_VALUE + comment));
 			ofNullable(c.getPath()).ifPresent(path -> cookieValues.add(PATH + ATTRIBUTE_VALUE + path));
 			ofNullable(c.getDomain()).ifPresent(domain -> cookieValues.add(DOMAIN + ATTRIBUTE_VALUE + domain));
-			ofNullable(c.getMaxAge()).filter(m -> m != UNDEFINED)
-					.ifPresent(maxAge -> cookieValues.add(MAX_AGE + ATTRIBUTE_VALUE + maxAge));
-			ofNullable(c.getSecured()).filter(s -> s)
-					.ifPresent(secured -> cookieValues.add(SECURE + ATTRIBUTE_VALUE + secured));
-			ofNullable(c.getHttpOnly()).filter(h -> h)
-					.ifPresent(httpOnly -> cookieValues.add(HTTP_ONLY + ATTRIBUTE_VALUE + httpOnly));
+			ofNullable(c.getMaxAge()).filter(m -> m != UNDEFINED).ifPresent(maxAge -> cookieValues.add(MAX_AGE + ATTRIBUTE_VALUE + maxAge));
+			ofNullable(c.getSecured()).filter(s -> s).ifPresent(secured -> cookieValues.add(SECURE + ATTRIBUTE_VALUE + secured));
+			ofNullable(c.getHttpOnly()).filter(h -> h).ifPresent(httpOnly -> cookieValues.add(HTTP_ONLY + ATTRIBUTE_VALUE + httpOnly));
 			SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
 			sdf.setTimeZone(timeZone);
-			ofNullable(c.getExpiryDate()).ifPresent(expireDate -> cookieValues.add(
-					EXPIRES + ATTRIBUTE_VALUE + sdf.format(expireDate)));
+			ofNullable(c.getExpiryDate()).ifPresent(expireDate -> cookieValues.add(EXPIRES + ATTRIBUTE_VALUE + sdf.format(expireDate)));
 			ofNullable(c.getVersion()).ifPresent(version -> cookieValues.add(VERSION + ATTRIBUTE_VALUE + version));
 			ofNullable(c.getSameSite()).ifPresent(sameSite -> cookieValues.add(SAME_SITE + ATTRIBUTE_VALUE + sameSite));
-			return cookieValues.isEmpty() ?
-					c.getName() :
-					c.getName() + NAME_DELIMITER + String.join(ATTRIBUTE_SEPARATOR, cookieValues);
+			return cookieValues.isEmpty() ? c.getName() : c.getName() + NAME_DELIMITER + String.join(ATTRIBUTE_SEPARATOR, cookieValues);
 		}).orElse(null);
 	}
 }

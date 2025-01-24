@@ -17,9 +17,9 @@
 package com.epam.reportportal.formatting.http;
 
 import com.epam.reportportal.formatting.http.entities.BodyType;
-import com.epam.reportportal.formatting.http.prettiers.HtmlPrettier;
-import com.epam.reportportal.formatting.http.prettiers.JsonPrettier;
-import com.epam.reportportal.formatting.http.prettiers.XmlPrettier;
+import com.epam.reportportal.formatting.http.prettifiers.HtmlPrettifier;
+import com.epam.reportportal.formatting.http.prettifiers.JsonPrettifier;
+import com.epam.reportportal.formatting.http.prettifiers.XmlPrettifier;
 import com.epam.reportportal.utils.http.ContentType;
 
 import java.util.*;
@@ -47,43 +47,48 @@ public class Constants {
 			ContentType.MULTIPART_PARALLEL
 	)));
 
-	public static final Set<String> TEXT_TYPES =
-			Collections.unmodifiableSet(new HashSet<>(Arrays.asList(ContentType.APPLICATION_JSON,
-					ContentType.TEXT_PLAIN,
-					ContentType.TEXT_HTML,
-					ContentType.TEXT_XML,
-					ContentType.APPLICATION_XML,
-					ContentType.APPLICATION_SOAP_XML,
-					ContentType.APPLICATION_ATOM_XML,
-					// Can't use ContentType.TEXT_JSON, etc. because client-java dependency marked as compileOnly
-					"text/json",
-					"application/x.reportportal.launch.v2+json",
-					"application/x.reportportal.test.v2+json"
-			)));
+	public static final Set<String> TEXT_TYPES = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
+			ContentType.APPLICATION_JSON,
+			ContentType.TEXT_PLAIN,
+			ContentType.TEXT_HTML,
+			ContentType.TEXT_XML,
+			ContentType.APPLICATION_XML,
+			ContentType.APPLICATION_SOAP_XML,
+			ContentType.APPLICATION_ATOM_XML,
+			// Can't use ContentType.TEXT_JSON, etc. because client-java dependency marked as compileOnly
+			"text/json",
+			"application/x.reportportal.launch.v2+json",
+			"application/x.reportportal.test.v2+json"
+	)));
 
 	public static final Set<String> FORM_TYPES = Collections.singleton(ContentType.APPLICATION_FORM_URLENCODED);
 
-	public static final Map<String, BodyType> BODY_TYPE_MAP = Collections.unmodifiableMap(Stream.of(TEXT_TYPES.stream()
-					.collect(Collectors.toMap(k -> k, v -> BodyType.TEXT)),
+	public static final Map<String, BodyType> BODY_TYPE_MAP = Collections.unmodifiableMap(Stream.of(
+			TEXT_TYPES.stream().collect(Collectors.toMap(k -> k, v -> BodyType.TEXT)),
 			FORM_TYPES.stream().collect(Collectors.toMap(k -> k, v -> BodyType.FORM)),
 			MULTIPART_TYPES.stream().collect(Collectors.toMap(k -> k, v -> BodyType.MULTIPART))
 	).flatMap(m -> m.entrySet().stream()).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
 
-	public static final Map<String, Function<String, String>> DEFAULT_PRETTIERS =
-			Collections.unmodifiableMap(new HashMap<String, Function<String, String>>() {{
-				put(ContentType.APPLICATION_XML, XmlPrettier.INSTANCE);
-				put(ContentType.APPLICATION_SOAP_XML, XmlPrettier.INSTANCE);
-				put(ContentType.APPLICATION_ATOM_XML, XmlPrettier.INSTANCE);
-				put(ContentType.APPLICATION_SVG_XML, XmlPrettier.INSTANCE);
-				put(ContentType.APPLICATION_XHTML_XML, XmlPrettier.INSTANCE);
-				put(ContentType.TEXT_XML, XmlPrettier.INSTANCE);
-				put(ContentType.APPLICATION_JSON, JsonPrettier.INSTANCE);
-				// Can't use ContentType.TEXT_JSON, etc. because client-java dependency marked as compileOnly
-				put("text/json", JsonPrettier.INSTANCE);
-				put("application/x.reportportal.launch.v2+json", JsonPrettier.INSTANCE);
-				put("application/x.reportportal.test.v2+json", JsonPrettier.INSTANCE);
-				put(ContentType.TEXT_HTML, HtmlPrettier.INSTANCE);
-			}});
+	public static final Map<String, Function<String, String>> DEFAULT_PRETTIFIERS = Collections.unmodifiableMap(new HashMap<String, Function<String, String>>() {{
+		put(ContentType.APPLICATION_XML, XmlPrettifier.INSTANCE);
+		put(ContentType.APPLICATION_SOAP_XML, XmlPrettifier.INSTANCE);
+		put(ContentType.APPLICATION_ATOM_XML, XmlPrettifier.INSTANCE);
+		put(ContentType.APPLICATION_SVG_XML, XmlPrettifier.INSTANCE);
+		put(ContentType.APPLICATION_XHTML_XML, XmlPrettifier.INSTANCE);
+		put(ContentType.TEXT_XML, XmlPrettifier.INSTANCE);
+		put(ContentType.APPLICATION_JSON, JsonPrettifier.INSTANCE);
+		// Can't use ContentType.TEXT_JSON, etc. because client-java dependency marked as compileOnly
+		put("text/json", JsonPrettifier.INSTANCE);
+		put("application/x.reportportal.launch.v2+json", JsonPrettifier.INSTANCE);
+		put("application/x.reportportal.test.v2+json", JsonPrettifier.INSTANCE);
+		put(ContentType.TEXT_HTML, HtmlPrettifier.INSTANCE);
+	}});
+
+	/**
+	 * @deprecated Use {@link #DEFAULT_PRETTIFIERS} instead
+	 */
+	@Deprecated
+	public static final Map<String, Function<String, String>> DEFAULT_PRETTIERS = DEFAULT_PRETTIFIERS;
 
 	private Constants() {
 		throw new RuntimeException("No instances should exist for the class!");

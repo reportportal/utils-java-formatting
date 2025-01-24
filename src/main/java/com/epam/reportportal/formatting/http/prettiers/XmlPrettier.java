@@ -16,22 +16,16 @@
 
 package com.epam.reportportal.formatting.http.prettiers;
 
-import org.xml.sax.InputSource;
+import com.epam.reportportal.formatting.http.prettifiers.XmlPrettifier;
 
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
-public class XmlPrettier implements Prettier {
+/**
+ * @deprecated Use {@link XmlPrettifier} instead.
+ */
+public class XmlPrettier extends XmlPrettifier {
 	private static final int DEFAULT_INDENT = 2;
 	private static final Map<String, String> DEFAULT_OUTPUT_PROPERTIES = new HashMap<String, String>() {{
 		put(OutputKeys.ENCODING, "UTF-8");
@@ -39,39 +33,11 @@ public class XmlPrettier implements Prettier {
 		put(OutputKeys.INDENT, "yes");
 	}};
 
-	public static final XmlPrettier INSTANCE = new XmlPrettier();
-
-	private final ThreadLocal<Transformer> threadLocal;
-
 	public XmlPrettier(int indent, Map<String, String> outputSettings) {
-		threadLocal = ThreadLocal.withInitial(() -> {
-			TransformerFactory transformerFactory = TransformerFactory.newInstance();
-			transformerFactory.setAttribute("indent-number", indent);
-			Transformer transformer;
-			try {
-				transformer = transformerFactory.newTransformer();
-			} catch (TransformerConfigurationException e) {
-				throw new IllegalArgumentException(e.getMessage(), e);
-			}
-			outputSettings.forEach(transformer::setOutputProperty);
-			return transformer;
-		});
+		super(indent, outputSettings);
 	}
 
 	private XmlPrettier() {
 		this(DEFAULT_INDENT, DEFAULT_OUTPUT_PROPERTIES);
-	}
-
-	@Override
-	public String apply(String xml) {
-		try {
-			InputSource src = new InputSource(new StringReader(xml));
-			org.w3c.dom.Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(src);
-			Writer out = new StringWriter();
-			threadLocal.get().transform(new DOMSource(document), new StreamResult(out));
-			return out.toString().trim();
-		} catch (Exception ignore) {
-			return xml;
-		}
 	}
 }

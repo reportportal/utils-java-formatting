@@ -34,8 +34,7 @@ public class HttpFormatUtilsTest {
 				new Object[] { "text/html; charset=utf-16", "text/html" },
 				new Object[] { "application/json", "application/json" },
 				new Object[] { null, "application/octet-stream" },
-				new Object[] { "application/x-www-form-urlencoded; charset=ISO-8859-1",
-						"application/x-www-form-urlencoded" }
+				new Object[] { "application/x-www-form-urlencoded; charset=ISO-8859-1", "application/x-www-form-urlencoded" }
 		);
 	}
 
@@ -70,8 +69,7 @@ public class HttpFormatUtilsTest {
 				new Object[] { null, BodyType.NONE },
 				new Object[] { "application/x-www-form-urlencoded; charset=ISO-8859-1", BodyType.FORM },
 				new Object[] { "image/jpeg", BodyType.BINARY },
-				new Object[] { "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW",
-						BodyType.MULTIPART },
+				new Object[] { "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW", BodyType.MULTIPART },
 				new Object[] { "", BodyType.NONE }
 		);
 	}
@@ -84,8 +82,8 @@ public class HttpFormatUtilsTest {
 
 	public static Iterable<Object[]> headerValues() {
 		return Arrays.asList(
-				new Object[] { "Content-Type: multipart/form-data; boundary=LjalBsLkAYGgsOfzTPStiqo8-Ur9wnV9",
-						"Content-Type", "multipart/form-data; boundary=LjalBsLkAYGgsOfzTPStiqo8-Ur9wnV9" },
+				new Object[] { "Content-Type: multipart/form-data; boundary=LjalBsLkAYGgsOfzTPStiqo8-Ur9wnV9", "Content-Type",
+						"multipart/form-data; boundary=LjalBsLkAYGgsOfzTPStiqo8-Ur9wnV9" },
 				new Object[] { "Host: docker.local:8080", "Host", "docker.local:8080" },
 				new Object[] { "X-Custom-Header: a: b", "X-Custom-Header", "a: b" },
 				new Object[] { "X-Custom-Header: ", "X-Custom-Header", "" },
@@ -112,15 +110,14 @@ public class HttpFormatUtilsTest {
 	public static Iterable<Object[]> cookieValues() {
 		return Arrays.asList(
 				new Object[] { "test=value", "test", "value", null, null, false, false },
-				new Object[] { "test=value; expires=" + DATE_STR + "; path=/; secure; httponly", "test", "value",
-						DATE_CAL.getTime(), "/", true, true }
+				new Object[] { "test=value; expires=" + DATE_STR + "; path=/; secure; httponly", "test", "value", DATE_CAL.getTime(), "/",
+						true, true }
 		);
 	}
 
 	@ParameterizedTest
 	@MethodSource("cookieValues")
-	public void testToCookie(String headerLine, String name, String value, Date date, String path, boolean secure,
-			boolean http) {
+	public void testToCookie(String headerLine, String name, String value, Date date, String path, boolean secure, boolean http) {
 		Cookie cookie = HttpFormatUtils.toCookie(headerLine);
 		assertThat(cookie.getName(), equalTo(name));
 		assertThat(cookie.getValue(), equalTo(value));
@@ -132,11 +129,7 @@ public class HttpFormatUtilsTest {
 	}
 
 	public static Iterable<Object[]> cookieHeaders() {
-		return Arrays.asList(
-				new Object[] { "cookie", true },
-				new Object[] { "Cookie", true },
-				new Object[] { "Cook", false }
-		);
+		return Arrays.asList(new Object[] { "cookie", true }, new Object[] { "Cookie", true }, new Object[] { "Cook", false });
 	}
 
 	@ParameterizedTest
@@ -146,11 +139,7 @@ public class HttpFormatUtilsTest {
 	}
 
 	public static Iterable<Object[]> setCookieHeaders() {
-		return Arrays.asList(
-				new Object[] { "set-cookie", true },
-				new Object[] { "Set-Cookie", true },
-				new Object[] { "setcookie", false }
-		);
+		return Arrays.asList(new Object[] { "set-cookie", true }, new Object[] { "Set-Cookie", true }, new Object[] { "setcookie", false });
 	}
 
 	@ParameterizedTest
