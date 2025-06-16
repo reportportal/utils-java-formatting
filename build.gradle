@@ -15,7 +15,7 @@
  */
 apply plugin: 'java-library'
 
-apply from: 'build-quality.gradle'
+apply from: "${project.scripts_url}/${project.scripts_branch}/build-quality.gradle"
 apply from: "${project.scripts_url}/${project.scripts_branch}/release-commons.gradle"
 apply from: "${project.scripts_url}/${project.scripts_branch}/signing.gradle"
 apply from: "${project.scripts_url}/${project.scripts_branch}/jacoco.gradle"
@@ -44,7 +44,7 @@ dependencies {
 
     testImplementation "com.epam.reportportal:client-java:${client_version}"
     testImplementation "com.google.code.findbugs:jsr305:${jsr305_version}"
-    testImplementation 'com.epam.reportportal:agent-java-test-utils:0.0.7'
+    testImplementation 'com.epam.reportportal:agent-java-test-utils:0.0.12'
 
     testImplementation("org.junit.platform:junit-platform-runner:${junit5_runner_version}") {
         exclude module: 'junit'
