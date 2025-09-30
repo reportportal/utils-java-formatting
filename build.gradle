@@ -29,8 +29,8 @@ project.ext.limits = [
         'class'      : 60
 ]
 
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
 
 repositories {
     mavenCentral()
@@ -38,13 +38,12 @@ repositories {
 
 dependencies {
     compileOnly "com.epam.reportportal:client-java:${client_version}"
-    compileOnly "com.google.code.findbugs:jsr305:${jsr305_version}"
 
     implementation 'org.jsoup:jsoup:1.15.3'
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
 
     testImplementation "com.epam.reportportal:client-java:${client_version}"
-    testImplementation "com.google.code.findbugs:jsr305:${jsr305_version}"
-    testImplementation 'com.epam.reportportal:agent-java-test-utils:0.0.12'
+    testImplementation 'com.epam.reportportal:agent-java-test-utils:0.1.0'
 
     testImplementation("org.junit.platform:junit-platform-runner:${junit5_runner_version}") {
         exclude module: 'junit'

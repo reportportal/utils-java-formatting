@@ -19,7 +19,7 @@ package com.epam.reportportal.formatting.http.converters;
 import com.epam.reportportal.formatting.http.Constants;
 import com.epam.reportportal.formatting.http.entities.Cookie;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.*;
 import java.util.function.Function;
 

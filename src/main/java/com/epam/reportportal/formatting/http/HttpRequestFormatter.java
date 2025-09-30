@@ -26,8 +26,8 @@ import com.epam.reportportal.formatting.http.entities.Header;
 import com.epam.reportportal.formatting.http.entities.Param;
 import com.epam.reportportal.utils.http.ContentType;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.util.*;
 import java.util.function.Function;
 
@@ -242,7 +242,7 @@ public class HttpRequestFormatter implements HttpFormatter {
 		}
 
 		public Builder addCookie(String name, String value, String comment, String path, String domain, Long maxAge, Boolean secured,
-				Boolean httpOnly, Date expiryDate, Integer version, String sameSite) {
+				Boolean httpOnly, java.time.Instant expiryDate, Integer version, String sameSite) {
 			return addCookie(HttpFormatUtils.toCookie(
 					name,
 					value,

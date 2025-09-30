@@ -21,7 +21,7 @@ import com.epam.reportportal.formatting.http.entities.Header;
 import com.epam.reportportal.message.TypeAwareByteSource;
 import com.epam.reportportal.utils.files.Utils;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;

@@ -31,8 +31,8 @@ import com.epam.reportportal.service.step.StepReporter;
 import com.epam.reportportal.utils.files.ByteSource;
 import com.epam.reportportal.utils.http.ContentType;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.util.*;
 import java.util.function.Function;
 
@@ -93,26 +93,26 @@ public abstract class AbstractHttpFormatter<SELF extends AbstractHttpFormatter<S
 
 	protected void attachAsBinary(@Nullable String message, @Nullable byte[] attachment, @Nonnull String contentType) {
 		if (attachment == null) {
-			ReportPortal.emitLog(message, logLevel, Calendar.getInstance().getTime());
+			ReportPortal.emitLog(message, logLevel, java.time.Instant.now());
 		} else {
 			ReportPortal.emitLog(
 					new ReportPortalMessage(ByteSource.wrap(attachment), contentType, message),
 					logLevel,
-					Calendar.getInstance().getTime()
+					java.time.Instant.now()
 			);
 		}
 	}
 
 	protected void logMultiPartRequest(@Nonnull HttpRequestFormatter formatter) {
-		Date currentDate = Calendar.getInstance().getTime();
+		java.time.Instant currentDate = java.time.Instant.now();
 		String headers = formatter.formatHeaders() + formatter.formatCookies();
 		if (!headers.isEmpty()) {
 			ReportPortal.emitLog(headers, logLevel, currentDate);
 		}
 
-		Date myDate = currentDate;
+		java.time.Instant myDate = currentDate;
 		for (HttpPartFormatter part : formatter.getMultipartBody()) {
-			myDate = new Date(myDate.getTime() + 1);
+			myDate = myDate.plusMillis(1);
 			HttpPartFormatter.PartType partType = part.getType();
 			switch (partType) {
 				case TEXT:
@@ -128,11 +128,11 @@ public abstract class AbstractHttpFormatter<SELF extends AbstractHttpFormatter<S
 		BodyType type = formatter.getType();
 		switch (type) {
 			case NONE:
-				ReportPortal.emitLog(formatter.formatHead(), logLevel, Calendar.getInstance().getTime());
+				ReportPortal.emitLog(formatter.formatHead(), logLevel, java.time.Instant.now());
 				break;
 			case TEXT:
 			case FORM:
-				ReportPortal.emitLog(formatter.formatAsText(), logLevel, Calendar.getInstance().getTime());
+				ReportPortal.emitLog(formatter.formatAsText(), logLevel, java.time.Instant.now());
 				break;
 			case BINARY:
 				attachAsBinary(
@@ -149,7 +149,7 @@ public abstract class AbstractHttpFormatter<SELF extends AbstractHttpFormatter<S
 				sr.ifPresent(StepReporter::finishPreviousStep);
 				break;
 			default:
-				ReportPortal.emitLog("Unknown entity type: " + type.name(), LogLevel.ERROR.name(), Calendar.getInstance().getTime());
+				ReportPortal.emitLog("Unknown entity type: " + type.name(), LogLevel.ERROR.name(), java.time.Instant.now());
 		}
 	}
 

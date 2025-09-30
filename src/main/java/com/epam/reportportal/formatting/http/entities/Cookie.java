@@ -18,15 +18,15 @@ package com.epam.reportportal.formatting.http.entities;
 
 import io.reactivex.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import java.util.Date;
+import jakarta.annotation.Nonnull;
+import java.time.Instant;
 
 public class Cookie implements Cloneable {
 
 	private final String name;
 	private String value;
 	private String comment;
-	private Date expiryDate;
+	private Instant expiryDate;
 	private String domain;
 	private String path;
 	private Boolean secured;
@@ -63,11 +63,11 @@ public class Cookie implements Cloneable {
 	}
 
 	@Nullable
-	public Date getExpiryDate() {
+	public Instant getExpiryDate() {
 		return expiryDate;
 	}
 
-	public void setExpiryDate(@Nullable Date expiryDate) {
+	public void setExpiryDate(@Nullable Instant expiryDate) {
 		this.expiryDate = expiryDate;
 	}
 

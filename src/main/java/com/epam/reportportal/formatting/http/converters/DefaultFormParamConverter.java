@@ -18,7 +18,7 @@ package com.epam.reportportal.formatting.http.converters;
 
 import com.epam.reportportal.formatting.http.entities.Param;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.function.Function;
 
 import static java.util.Optional.ofNullable;

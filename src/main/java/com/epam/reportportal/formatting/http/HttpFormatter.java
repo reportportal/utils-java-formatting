@@ -18,8 +18,8 @@ package com.epam.reportportal.formatting.http;
 
 import com.epam.reportportal.formatting.http.entities.BodyType;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 public interface HttpFormatter {
 
