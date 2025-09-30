@@ -69,26 +69,20 @@ public class Constants {
 			MULTIPART_TYPES.stream().collect(Collectors.toMap(k -> k, v -> BodyType.MULTIPART))
 	).flatMap(m -> m.entrySet().stream()).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
 
-	public static final Map<String, Function<String, String>> DEFAULT_PRETTIFIERS = Collections.unmodifiableMap(new HashMap<String, Function<String, String>>() {{
-		put(ContentType.APPLICATION_XML, XmlPrettifier.INSTANCE);
-		put(ContentType.APPLICATION_SOAP_XML, XmlPrettifier.INSTANCE);
-		put(ContentType.APPLICATION_ATOM_XML, XmlPrettifier.INSTANCE);
-		put(ContentType.APPLICATION_SVG_XML, XmlPrettifier.INSTANCE);
-		put(ContentType.APPLICATION_XHTML_XML, XmlPrettifier.INSTANCE);
-		put(ContentType.TEXT_XML, XmlPrettifier.INSTANCE);
-		put(ContentType.APPLICATION_JSON, JsonPrettifier.INSTANCE);
-		// Can't use ContentType.TEXT_JSON, etc. because client-java dependency marked as compileOnly
-		put("text/json", JsonPrettifier.INSTANCE);
-		put("application/x.reportportal.launch.v2+json", JsonPrettifier.INSTANCE);
-		put("application/x.reportportal.test.v2+json", JsonPrettifier.INSTANCE);
-		put(ContentType.TEXT_HTML, HtmlPrettifier.INSTANCE);
-	}});
-
-	/**
-	 * @deprecated Use {@link #DEFAULT_PRETTIFIERS} instead
-	 */
-	@Deprecated
-	public static final Map<String, Function<String, String>> DEFAULT_PRETTIERS = DEFAULT_PRETTIFIERS;
+	public static final Map<String, Function<String, String>> DEFAULT_PRETTIFIERS = Map.ofEntries(
+			Map.entry(ContentType.APPLICATION_XML, XmlPrettifier.INSTANCE),
+			Map.entry(ContentType.APPLICATION_SOAP_XML, XmlPrettifier.INSTANCE),
+			Map.entry(ContentType.APPLICATION_ATOM_XML, XmlPrettifier.INSTANCE),
+			Map.entry(ContentType.APPLICATION_SVG_XML, XmlPrettifier.INSTANCE),
+			Map.entry(ContentType.APPLICATION_XHTML_XML, XmlPrettifier.INSTANCE),
+			Map.entry(ContentType.TEXT_XML, XmlPrettifier.INSTANCE),
+			Map.entry(ContentType.APPLICATION_JSON, JsonPrettifier.INSTANCE),
+			// Can't use ContentType.TEXT_JSON, etc. because client-java dependency marked as compileOnly
+			Map.entry("text/json", JsonPrettifier.INSTANCE),
+			Map.entry("application/x.reportportal.launch.v2+json", JsonPrettifier.INSTANCE),
+			Map.entry("application/x.reportportal.test.v2+json", JsonPrettifier.INSTANCE),
+			Map.entry(ContentType.TEXT_HTML, HtmlPrettifier.INSTANCE)
+	);
 
 	private Constants() {
 		throw new RuntimeException("No instances should exist for the class!");

@@ -24,11 +24,10 @@ import com.epam.reportportal.formatting.http.entities.Cookie;
 import com.epam.reportportal.formatting.http.entities.Header;
 import com.epam.reportportal.formatting.http.entities.Param;
 import com.epam.reportportal.utils.http.ContentType;
-import org.apache.commons.lang3.tuple.Pair;
-
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
-import java.io.UnsupportedEncodingException;
+import org.apache.commons.lang3.tuple.Pair;
+
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -140,11 +139,7 @@ public class HttpFormatUtils {
 	public static Stream<Pair<String, String>> toKeyValue(@Nonnull String headerValue) {
 		return Arrays.stream(headerValue.split(";\\s*")).map(c -> c.split("=", 2)).map(kv -> {
 			if (kv.length > 1) {
-				try {
-					return Pair.of(kv[0], URLDecoder.decode(kv[1], Charset.defaultCharset().name()));
-				} catch (UnsupportedEncodingException e) {
-					throw new IllegalStateException(e);
-				}
+				return Pair.of(kv[0], URLDecoder.decode(kv[1], Charset.defaultCharset()));
 			}
 			return Pair.of(kv[0], "");
 		});
@@ -233,11 +228,7 @@ public class HttpFormatUtils {
 				.map(param -> param.split("=", 2))
 				.map(Arrays::stream)
 				.map(param -> param.map(p -> {
-					try {
-						return URLDecoder.decode(p, charset.name());
-					} catch (UnsupportedEncodingException e) {
-						throw new IllegalStateException("Missed standard charset", e);
-					}
+					return URLDecoder.decode(p, charset);
 				}).collect(Collectors.toList()))
 				.map(param -> {
 					if (param.isEmpty()) {

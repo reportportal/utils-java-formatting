@@ -25,7 +25,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.Arrays;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -109,8 +109,8 @@ public class HttpFormatUtilsTest {
 	public static Iterable<Object[]> cookieValues() {
 		return Arrays.asList(
 				new Object[] { "test=value", "test", "value", null, null, false, false },
-				new Object[] { "test=value; expires=" + DATE_STR + "; path=/; secure; httponly", "test", "value", DATE_INSTANT, "/",
-						true, true }
+				new Object[] { "test=value; expires=" + DATE_STR + "; path=/; secure; httponly", "test", "value", DATE_INSTANT, "/", true,
+						true }
 		);
 	}
 

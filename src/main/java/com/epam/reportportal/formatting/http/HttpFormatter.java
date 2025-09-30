@@ -17,7 +17,6 @@
 package com.epam.reportportal.formatting.http;
 
 import com.epam.reportportal.formatting.http.entities.BodyType;
-
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 

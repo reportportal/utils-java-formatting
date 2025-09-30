@@ -18,12 +18,8 @@ package com.epam.reportportal.formatting.http;
 
 import com.epam.reportportal.formatting.http.converters.DefaultHttpHeaderConverter;
 import com.epam.reportportal.formatting.http.entities.Header;
-import com.epam.reportportal.message.TypeAwareByteSource;
-import com.epam.reportportal.utils.files.Utils;
-
 import jakarta.annotation.Nonnull;
-import java.io.File;
-import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -132,15 +128,6 @@ public class HttpPartFormatter {
 		this.prettifiers = prettifiers;
 	}
 
-	/**
-	 * @param prettifiers a map with the content type as a key and the prettifier function as a value
-	 * @deprecated Use {@link #setPrettifiers(Map)} instead
-	 */
-	@Deprecated
-	public void setPrettiers(Map<String, Function<String, String>> prettifiers) {
-		setPrettifiers(prettifiers);
-	}
-
 	public enum PartType {
 		TEXT,
 		BINARY
@@ -158,18 +145,6 @@ public class HttpPartFormatter {
 
 		private Function<Header, String> headerConverter;
 		private Map<String, Function<String, String>> prettifiers;
-
-		/***
-		 *
-		 * @deprecated the constructor does not accept charset and should be removed
-		 */
-		@Deprecated
-		public Builder(@Nonnull PartType partType, @Nonnull File body) throws IOException {
-			type = partType;
-			TypeAwareByteSource file = Utils.getFile(body);
-			this.mimeType = file.getMediaType();
-			payload = file.read();
-		}
 
 		public Builder(@Nonnull PartType partType, @Nonnull String mimeType, @Nonnull Object body) {
 			type = partType;
@@ -210,16 +185,6 @@ public class HttpPartFormatter {
 		public Builder prettifiers(Map<String, Function<String, String>> formatPrettifiers) {
 			this.prettifiers = formatPrettifiers;
 			return this;
-		}
-
-		/**
-		 * @param formatPrettifiers a map with the content type as a key and the prettifier function as a value
-		 * @return the builder instance
-		 * @deprecated Use {@link #prettifiers(Map)} instead
-		 */
-		@Deprecated
-		public Builder prettiers(Map<String, Function<String, String>> formatPrettifiers) {
-			return prettifiers(formatPrettifiers);
 		}
 
 		public HttpPartFormatter build() {

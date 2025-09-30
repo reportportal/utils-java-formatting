@@ -17,8 +17,8 @@
 package com.epam.reportportal.formatting.http.entities;
 
 import io.reactivex.annotations.Nullable;
-
 import jakarta.annotation.Nonnull;
+
 import java.time.Instant;
 
 public class Cookie implements Cloneable {
