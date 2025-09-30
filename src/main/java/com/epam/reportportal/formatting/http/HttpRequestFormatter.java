@@ -25,9 +25,9 @@ import com.epam.reportportal.formatting.http.entities.Cookie;
 import com.epam.reportportal.formatting.http.entities.Header;
 import com.epam.reportportal.formatting.http.entities.Param;
 import com.epam.reportportal.utils.http.ContentType;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Function;
 
@@ -179,15 +179,6 @@ public class HttpRequestFormatter implements HttpFormatter {
 		this.prettifiers = prettifiers;
 	}
 
-	/**
-	 * @param prettifiers a map with the content type as a key and the prettifier function as a value
-	 * @deprecated Use {@link #setPrettifiers(Map)} instead
-	 */
-	@Deprecated
-	public void setPrettiers(Map<String, Function<String, String>> prettifiers) {
-		setPrettifiers(prettifiers);
-	}
-
 	public static class Builder {
 		private final String method;
 		private final String uri;
@@ -242,7 +233,7 @@ public class HttpRequestFormatter implements HttpFormatter {
 		}
 
 		public Builder addCookie(String name, String value, String comment, String path, String domain, Long maxAge, Boolean secured,
-				Boolean httpOnly, Date expiryDate, Integer version, String sameSite) {
+				Boolean httpOnly, java.time.Instant expiryDate, Integer version, String sameSite) {
 			return addCookie(HttpFormatUtils.toCookie(
 					name,
 					value,
@@ -315,16 +306,6 @@ public class HttpRequestFormatter implements HttpFormatter {
 		public Builder prettifiers(Map<String, Function<String, String>> formatPrettifiers) {
 			this.prettifiers = formatPrettifiers;
 			return this;
-		}
-
-		/**
-		 * @param formatPrettifiers a map with the content type as a key and the prettifier function as a value
-		 * @return the builder instance
-		 * @deprecated Use {@link #prettifiers(Map)} instead
-		 */
-		@Deprecated
-		public Builder prettiers(Map<String, Function<String, String>> formatPrettifiers) {
-			return prettifiers(formatPrettifiers);
 		}
 
 		public HttpRequestFormatter build() {

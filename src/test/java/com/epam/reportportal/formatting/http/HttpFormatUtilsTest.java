@@ -22,7 +22,10 @@ import com.epam.reportportal.formatting.http.entities.Header;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.*;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.Arrays;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -101,23 +104,19 @@ public class HttpFormatUtilsTest {
 	}
 
 	public static final String DATE_STR = "Tue, 06 Sep 2022 09:32:51 UTC";
-	public static final Calendar DATE_CAL = new GregorianCalendar(2022, Calendar.SEPTEMBER, 6, 9, 32, 51);
-
-	static {
-		DATE_CAL.setTimeZone(TimeZone.getTimeZone("UTC"));
-	}
+	public static final Instant DATE_INSTANT = ZonedDateTime.of(2022, 9, 6, 9, 32, 51, 0, ZoneId.of("UTC")).toInstant();
 
 	public static Iterable<Object[]> cookieValues() {
 		return Arrays.asList(
 				new Object[] { "test=value", "test", "value", null, null, false, false },
-				new Object[] { "test=value; expires=" + DATE_STR + "; path=/; secure; httponly", "test", "value", DATE_CAL.getTime(), "/",
-						true, true }
+				new Object[] { "test=value; expires=" + DATE_STR + "; path=/; secure; httponly", "test", "value", DATE_INSTANT, "/", true,
+						true }
 		);
 	}
 
 	@ParameterizedTest
 	@MethodSource("cookieValues")
-	public void testToCookie(String headerLine, String name, String value, Date date, String path, boolean secure, boolean http) {
+	public void testToCookie(String headerLine, String name, String value, Instant date, String path, boolean secure, boolean http) {
 		Cookie cookie = HttpFormatUtils.toCookie(headerLine);
 		assertThat(cookie.getName(), equalTo(name));
 		assertThat(cookie.getValue(), equalTo(value));

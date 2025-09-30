@@ -17,11 +17,11 @@
 package com.epam.reportportal.formatting.http.converters;
 
 import com.epam.reportportal.formatting.http.entities.Cookie;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.text.SimpleDateFormat;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TimeZone;
@@ -75,9 +75,9 @@ public class DefaultCookieConverter implements Function<Cookie, String> {
 			ofNullable(c.getMaxAge()).filter(m -> m != UNDEFINED).ifPresent(maxAge -> cookieValues.add(MAX_AGE + ATTRIBUTE_VALUE + maxAge));
 			ofNullable(c.getSecured()).filter(s -> s).ifPresent(secured -> cookieValues.add(SECURE + ATTRIBUTE_VALUE + secured));
 			ofNullable(c.getHttpOnly()).filter(h -> h).ifPresent(httpOnly -> cookieValues.add(HTTP_ONLY + ATTRIBUTE_VALUE + httpOnly));
-			SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
-			sdf.setTimeZone(timeZone);
-			ofNullable(c.getExpiryDate()).ifPresent(expireDate -> cookieValues.add(EXPIRES + ATTRIBUTE_VALUE + sdf.format(expireDate)));
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormat).withZone(timeZone.toZoneId());
+			ofNullable(c.getExpiryDate()).ifPresent(expireDate -> cookieValues.add(
+					EXPIRES + ATTRIBUTE_VALUE + formatter.format(expireDate)));
 			ofNullable(c.getVersion()).ifPresent(version -> cookieValues.add(VERSION + ATTRIBUTE_VALUE + version));
 			ofNullable(c.getSameSite()).ifPresent(sameSite -> cookieValues.add(SAME_SITE + ATTRIBUTE_VALUE + sameSite));
 			return cookieValues.isEmpty() ? c.getName() : c.getName() + NAME_DELIMITER + String.join(ATTRIBUTE_SEPARATOR, cookieValues);

@@ -21,11 +21,10 @@ import com.epam.reportportal.formatting.http.converters.DefaultHttpHeaderConvert
 import com.epam.reportportal.formatting.http.entities.BodyType;
 import com.epam.reportportal.formatting.http.entities.Cookie;
 import com.epam.reportportal.formatting.http.entities.Header;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -146,15 +145,6 @@ public class HttpResponseFormatter implements HttpFormatter {
 		this.prettifiers = prettifiers;
 	}
 
-	/**
-	 * @param prettifiers a map with the content type as a key and the prettifier function as a value
-	 * @deprecated Use {@link #setPrettifiers(Map)} instead
-	 */
-	@Deprecated
-	public void setPrettiers(Map<String, Function<String, String>> prettifiers) {
-		setPrettifiers(prettifiers);
-	}
-
 	public static class Builder {
 		private final int code;
 		private final String phrase;
@@ -198,7 +188,7 @@ public class HttpResponseFormatter implements HttpFormatter {
 		}
 
 		public Builder addCookie(String name, String value, String comment, String path, String domain, Long maxAge, Boolean secured,
-				Boolean httpOnly, Date expiryDate, Integer version, String sameSite) {
+				Boolean httpOnly, java.time.Instant expiryDate, Integer version, String sameSite) {
 			return addCookie(HttpFormatUtils.toCookie(
 					name,
 					value,
@@ -239,16 +229,6 @@ public class HttpResponseFormatter implements HttpFormatter {
 		public Builder prettifiers(Map<String, Function<String, String>> formatPrettifiers) {
 			this.prettifiers = formatPrettifiers;
 			return this;
-		}
-
-		/**
-		 * @param formatPrettifiers a map with the content type as a key and the prettifier function as a value
-		 * @return the builder instance
-		 * @deprecated Use {@link #prettifiers(Map)} instead
-		 */
-		@Deprecated
-		public Builder prettiers(Map<String, Function<String, String>> formatPrettifiers) {
-			return prettifiers(formatPrettifiers);
 		}
 
 		public HttpResponseFormatter build() {

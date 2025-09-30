@@ -24,16 +24,18 @@ import com.epam.reportportal.formatting.http.entities.Cookie;
 import com.epam.reportportal.formatting.http.entities.Header;
 import com.epam.reportportal.formatting.http.entities.Param;
 import com.epam.reportportal.utils.http.ContentType;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import org.apache.commons.lang3.tuple.Pair;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -137,11 +139,7 @@ public class HttpFormatUtils {
 	public static Stream<Pair<String, String>> toKeyValue(@Nonnull String headerValue) {
 		return Arrays.stream(headerValue.split(";\\s*")).map(c -> c.split("=", 2)).map(kv -> {
 			if (kv.length > 1) {
-				try {
-					return Pair.of(kv[0], URLDecoder.decode(kv[1], Charset.defaultCharset().name()));
-				} catch (UnsupportedEncodingException e) {
-					throw new IllegalStateException(e);
-				}
+				return Pair.of(kv[0], URLDecoder.decode(kv[1], Charset.defaultCharset()));
 			}
 			return Pair.of(kv[0], "");
 		});
@@ -150,7 +148,7 @@ public class HttpFormatUtils {
 	@Nonnull
 	public static Cookie toCookie(@Nonnull String name, @Nullable String value, @Nullable String comment, @Nullable String path,
 			@Nullable String domain, @Nullable Long maxAge, @Nullable Boolean secured, @Nullable Boolean httpOnly,
-			@Nullable Date expiryDate, @Nullable Integer version, @Nullable String sameSite) {
+			@Nullable Instant expiryDate, @Nullable Integer version, @Nullable String sameSite) {
 		Cookie cookie = new Cookie(name);
 		cookie.setValue(value);
 		cookie.setComment(comment);
@@ -180,10 +178,12 @@ public class HttpFormatUtils {
 		Boolean httpOnly = cookieMetadata.containsKey("httponly");
 		// Examples: Tue, 06 Sep 2022 09:32:51 GMT
 		//           Wed, 06-Sep-2023 11:22:09 GMT
-		Date expiryDate = ofNullable(cookieMetadata.get("expires")).map(d -> {
+		Instant expiryDate = ofNullable(cookieMetadata.get("expires")).map(d -> {
 			try {
-				return new SimpleDateFormat(DefaultCookieConverter.DEFAULT_COOKIE_DATE_FORMAT).parse(d.replace('-', ' '));
-			} catch (ParseException e) {
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DefaultCookieConverter.DEFAULT_COOKIE_DATE_FORMAT)
+						.withZone(ZoneId.of(DefaultCookieConverter.DEFAULT_COOKIE_TIME_ZONE.getID()));
+				return ZonedDateTime.parse(d.replace('-', ' '), formatter).toInstant();
+			} catch (DateTimeParseException e) {
 				return null;
 			}
 		}).orElse(null);
@@ -228,11 +228,7 @@ public class HttpFormatUtils {
 				.map(param -> param.split("=", 2))
 				.map(Arrays::stream)
 				.map(param -> param.map(p -> {
-					try {
-						return URLDecoder.decode(p, charset.name());
-					} catch (UnsupportedEncodingException e) {
-						throw new IllegalStateException("Missed standard charset", e);
-					}
+					return URLDecoder.decode(p, charset);
 				}).collect(Collectors.toList()))
 				.map(param -> {
 					if (param.isEmpty()) {

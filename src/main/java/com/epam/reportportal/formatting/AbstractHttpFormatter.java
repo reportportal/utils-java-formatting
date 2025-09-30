@@ -30,10 +30,14 @@ import com.epam.reportportal.service.ReportPortal;
 import com.epam.reportportal.service.step.StepReporter;
 import com.epam.reportportal.utils.files.ByteSource;
 import com.epam.reportportal.utils.http.ContentType;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.*;
+import java.time.Instant;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
 import static com.epam.reportportal.formatting.http.Constants.BODY_TYPE_MAP;
@@ -55,18 +59,7 @@ public abstract class AbstractHttpFormatter<SELF extends AbstractHttpFormatter<S
 	protected final Function<String, String> uriConverter;
 
 	private Map<String, Function<String, String>> contentPrettifiers = DEFAULT_PRETTIFIERS;
-
-	/**
-	 * @deprecated Use {@link #getContentPrettifiers()} instead
-	 */
-	@Deprecated
-	protected Map<String, Function<String, String>> contentPrettiers = contentPrettifiers;
-
-	/**
-	 * @deprecated Use {@link #getBodyTypeMap()} instead
-	 */
-	@Deprecated
-	protected Map<String, BodyType> bodyTypeMap = BODY_TYPE_MAP;
+	private Map<String, BodyType> bodyTypeMap = BODY_TYPE_MAP;
 
 	/**
 	 * Create a formatter with the specific log level and converters.
@@ -93,26 +86,26 @@ public abstract class AbstractHttpFormatter<SELF extends AbstractHttpFormatter<S
 
 	protected void attachAsBinary(@Nullable String message, @Nullable byte[] attachment, @Nonnull String contentType) {
 		if (attachment == null) {
-			ReportPortal.emitLog(message, logLevel, Calendar.getInstance().getTime());
+			ReportPortal.emitLog(message, logLevel, Instant.now());
 		} else {
 			ReportPortal.emitLog(
 					new ReportPortalMessage(ByteSource.wrap(attachment), contentType, message),
 					logLevel,
-					Calendar.getInstance().getTime()
+					Instant.now()
 			);
 		}
 	}
 
 	protected void logMultiPartRequest(@Nonnull HttpRequestFormatter formatter) {
-		Date currentDate = Calendar.getInstance().getTime();
+		Instant currentDate = Instant.now();
 		String headers = formatter.formatHeaders() + formatter.formatCookies();
 		if (!headers.isEmpty()) {
 			ReportPortal.emitLog(headers, logLevel, currentDate);
 		}
 
-		Date myDate = currentDate;
+		Instant myDate = currentDate;
 		for (HttpPartFormatter part : formatter.getMultipartBody()) {
-			myDate = new Date(myDate.getTime() + 1);
+			myDate = myDate.plusMillis(1);
 			HttpPartFormatter.PartType partType = part.getType();
 			switch (partType) {
 				case TEXT:
@@ -128,11 +121,11 @@ public abstract class AbstractHttpFormatter<SELF extends AbstractHttpFormatter<S
 		BodyType type = formatter.getType();
 		switch (type) {
 			case NONE:
-				ReportPortal.emitLog(formatter.formatHead(), logLevel, Calendar.getInstance().getTime());
+				ReportPortal.emitLog(formatter.formatHead(), logLevel, Instant.now());
 				break;
 			case TEXT:
 			case FORM:
-				ReportPortal.emitLog(formatter.formatAsText(), logLevel, Calendar.getInstance().getTime());
+				ReportPortal.emitLog(formatter.formatAsText(), logLevel, Instant.now());
 				break;
 			case BINARY:
 				attachAsBinary(
@@ -149,7 +142,7 @@ public abstract class AbstractHttpFormatter<SELF extends AbstractHttpFormatter<S
 				sr.ifPresent(StepReporter::finishPreviousStep);
 				break;
 			default:
-				ReportPortal.emitLog("Unknown entity type: " + type.name(), LogLevel.ERROR.name(), Calendar.getInstance().getTime());
+				ReportPortal.emitLog("Unknown entity type: " + type.name(), LogLevel.ERROR.name(), Instant.now());
 		}
 	}
 
@@ -165,7 +158,7 @@ public abstract class AbstractHttpFormatter<SELF extends AbstractHttpFormatter<S
 	@SuppressWarnings("unchecked")
 	@Nonnull
 	public SELF setBodyTypeMap(@Nonnull Map<String, BodyType> typeMap) {
-		this.bodyTypeMap = Collections.unmodifiableMap(new HashMap<>(typeMap));
+		this.bodyTypeMap = Map.copyOf(typeMap);
 		return (SELF) this;
 	}
 
@@ -195,24 +188,7 @@ public abstract class AbstractHttpFormatter<SELF extends AbstractHttpFormatter<S
 	@Nonnull
 	public SELF setContentPrettifiers(@Nonnull Map<String, Function<String, String>> contentPrettifiers) {
 		this.contentPrettifiers = Collections.unmodifiableMap(new HashMap<>(contentPrettifiers));
-		this.contentPrettiers = this.contentPrettifiers;
 		return (SELF) this;
-	}
-
-	/***
-	 * Set the content prettifiers for the formatter.
-	 * <p>
-	 * Content prettifiers are used to format the content of the request/response before logging it. The prettifiers are applied to the
-	 * content based on the content type.
-	 *
-	 * @param contentPrettifiers a map with the content type as a key and the prettifier function as a value
-	 * @return the formatter instance
-	 * @deprecated Use {@link #setContentPrettifiers(Map)} instead
-	 */
-	@Deprecated
-	@Nonnull
-	public SELF setContentPrettiers(@Nonnull Map<String, Function<String, String>> contentPrettifiers) {
-		return setContentPrettifiers(contentPrettifiers);
 	}
 
 	/**
