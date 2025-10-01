@@ -9,6 +9,7 @@
 - Switch on use of `Instant` class instead of `Date` to get more timestamp precision, by @HardNorth
 ### Removed
 - Deprecated code, by @HardNorth
+- Java 8-10 support, by @HardNorth
 
 ## [5.3.0]
 ### Changed
